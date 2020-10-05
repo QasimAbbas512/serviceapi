@@ -17,7 +17,7 @@ use yii\web\UploadedFile;
 /**
  * EmployeesController implements the CRUD actions for Employees model.
  */
-class ServiceController extends Controller
+class TestingController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -40,7 +40,7 @@ class ServiceController extends Controller
      */
     public function beforeAction($action)
     {
-        if ($action->id == 'call' || $action->id == 'postman') {
+        if ($action->id == 'call' || $action->id == 'postman' || $action->id == 'responseoptions') {
             $this->enableCsrfValidation = false;
         }
 
@@ -48,21 +48,19 @@ class ServiceController extends Controller
     }
 
     /**
-     * To get the response against a UserType in mobile info table.
+     * To get the response against a EmpID in mobile info table.
      */
     
-   public function actionResponseOptions($id=0,$branch_id=0)
+   public function actionResponseOption($id=0,$branch_id=0)
    {
-       
-       
 
          if($id == 0) {
              // $api_data_streem = file_get_contents("php://input");
-             $api_data_streem = '[{"UserType":"29","BranchID":"1"}]';
+             $api_data_streem = '[{"EmpID":"7","BranchID":"1"}]';
 
              $data = json_decode($api_data_streem);
              foreach ($data as $v) {
-                 $type = $v->UserType;
+                 $type = $v->EmpID;
                  $branch_id = $v->BranchID;
              }
 
@@ -74,12 +72,12 @@ class ServiceController extends Controller
                if(!empty($type)){
                    $resp_msg = '';
                    unset($master_array);
-                   $user_type_rec = AppResponse::find()->where(['AppUserType' => $type])->andWhere(['BranchID'=>$branch_id])->andWhere(AppConstants::get_active_record_only)->all();
+                   $user_type_rec = UserMobileInfo::find()->where(['AppEmpID' => $type])->andWhere(['BranchID'=>$branch_id])->andWhere(AppConstants::get_active_record_only)->all();
 
                    if(!empty($user_type_rec)){
 
                        foreach($user_type_rec as $v) {
-                           $user_type_detail = AppResponseDtl::find()->where(['ResponseHeadID' => $v->ID])->andWhere(['BranchID' => $branch_id])->andWhere(AppConstants::get_active_record_only)->all();
+                           $user_type_detail = AppResponseDtl::find()->where(['ResponseHeadID' => $v->UserType])->andWhere(['BranchID' => $branch_id])->andWhere(AppConstants::get_active_record_only)->all();
                            if (!empty($user_type_detail)) {
                                unset($val_arr);
                                foreach ($user_type_detail as $val) {
