@@ -56,7 +56,7 @@ class TestingController extends Controller
 
          if($id == 0) {
              // $api_data_streem = file_get_contents("php://input");
-             $api_data_streem = '[{"EmpID":"7","BranchID":"1"}]';
+             $api_data_streem = '[{"EmpID":"7","BranchID":"2"}]';
 
              $data = json_decode($api_data_streem);
              foreach ($data as $v) {
@@ -72,7 +72,7 @@ class TestingController extends Controller
                if(!empty($type)){
                    $resp_msg = '';
                    unset($master_array);
-                   $user_type_rec = UserMobileInfo::find()->where(['AppEmpID' => $type])->andWhere(['BranchID'=>$branch_id])->andWhere(AppConstants::get_active_record_only)->all();
+                   $user_type_rec = UserMobileInfo::find()->where(['EmpID' => $type])->andWhere(['BranchID'=>$branch_id])->andWhere(AppConstants::get_active_record_only)->all();
 
                    if(!empty($user_type_rec)){
 
@@ -84,7 +84,7 @@ class TestingController extends Controller
                                    $val_arr[] = array('value' => $val->ID, 'valueText' => $val->OptionText);
                                }
                            }
-                           $master_array[] = array('Headings'=>$v->ID,'InputType'=>$v->InputType,'OptionValue' => $val_arr);
+                           $master_array[] = array('Headings'=>$v->ID,'InputType'=>$val->InputType,'OptionValue' => $val_arr);
                            $resp_msg = array('headingInfo'=>$master_array);
                        }
 

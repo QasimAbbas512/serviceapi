@@ -14,6 +14,7 @@
 
 namespace app\controllers;
 
+use Yii;
 use app\models\Employees;
 use app\models\User;
 use app\models\UserMobileInfo;
@@ -57,11 +58,11 @@ class LoginController extends Controller
     
    public function actionPostman()
    {
-       $api_data_streem = file_get_contents("php://input");
+       //$api_data_streem = file_get_contents("php://input");
 
-         // $api_data_streem = '[{  "username":"admin",
-       //                          "pass":"admin123",
-       //                          "EMEI":"msxnjsxdhuh7677mmnk"}]';
+          $api_data_streem = '[{  "username":"admin",
+                                 "pass":"admin123",
+                                 "EMEI":"msxnjsxdhuh7677mmnk"}]';
 
        $data = json_decode($api_data_streem);
        if(!empty($data)) {
@@ -83,13 +84,19 @@ class LoginController extends Controller
                    $user_device_record = UserMobileInfo::find()->where(['EmpID' => $user_record->EmpID])->andWhere(['BranchID' => $user_record->BranchID])->andWhere(['DeviceMac'=>$emei_no])->andWhere(AppConstants::get_active_record_only)->one();
                    if(!empty($user_device_record)){
                     $resp_msg ='Y';
+                       $response_options = Yii::$app->runAction('service/response-options', ['id' => $user_device_record->UserType, 'branch_id'=>$user_device_record->BranchID]);
                    }else{
                        $resp_msg = 'Device is not registered. Please contact Administrator';
+                       $response_options = '';
                    }
                    $emei_valid_aray = array('EMEI_Validation'=>$resp_msg);
                }
-               $responce = array('message'=>$responce_message,'date'=>$responce_data,'emei_validation'=>$emei_valid_aray);
+
+               $responce = array('message'=>$responce_message,'date'=>$responce_data,'emei_validation'=>$emei_valid_aray,'ResponseOptions'=>$response_options);
                $returnVal = json_encode($responce);
+               echo '<pre>';
+               print_r($responce);
+               exit();
                return $returnVal;
            }
        }else{
