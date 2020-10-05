@@ -3,6 +3,8 @@
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 $machine_db = require __DIR__ . '/machine_db.php';
+$contacts_db = require __DIR__ . '/contacts_data.php';
+
 
 $config = [
     'id' => 'AAA_CMS',
@@ -71,6 +73,7 @@ $config = [
         ],
         'db' => $db,
         'machine_db' => $machine_db,
+        'contacts_db' => $contacts_db,
         /*
         'urlManager' => [
             'enablePrettyUrl' => true,

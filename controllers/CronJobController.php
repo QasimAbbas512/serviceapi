@@ -14,7 +14,7 @@
 
 namespace app\controllers;
 
-use app\models\Employees;
+use app\models\NodeRequestedDate;
 use app\models\User;
 use app\models\UserMobileInfo;
 use app\models\EmployeesSearch;
@@ -27,7 +27,7 @@ use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
 use linslin\yii2\curl;
 
-class LoginController extends Controller
+class CronJobController extends Controller
 {
 
     /**
@@ -60,14 +60,7 @@ class LoginController extends Controller
 
         $model_req = new NodeRequestedDate();
         
-                 echo 'asdasdas';exit();   
-        $call_action_data = '[{"MacAddress":"WSD3:9l:440:45","UserID":"21","CompanyID":"34","ContactID":"345632","ResponseValues":"3","ProfileInfo":"Address location area etc","VoiceCall":"CallFileName.aac","AudioNote":"VoiceNote.aac","OtherNotes":"text notes"}]';
-
-        $model_req->DataPacket = $call_action_data;    
-        $model_req->RequestDestination = 'mobile_call_dump';
-        $model_req->ReceivedOn = date('Y-m-d H:i:s');
-        $model_req->DataPacket = $call_action_data;
-       
+                 
 
             if($model_req->save()) {
                 $responce = array("Code"=>200,"message"=>"Save Sucessfully");
