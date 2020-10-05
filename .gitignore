@@ -1,6 +1,5 @@
 # ignor following application files
-/config
-/runtime
+
 /web/emp_images
 /web/logo_image
 
