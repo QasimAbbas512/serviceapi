@@ -16,8 +16,8 @@ namespace app\controllers;
 
 use app\models\NodeRequestedDate;
 use app\models\JobCallResponses;
-use app\models\UserMobileInfo;
 use app\models\JobPacketDtl;
+use app\models\JobPackets;
 use CommonFunctions;
 use AppConstants;
 use GetParams;
@@ -69,60 +69,74 @@ class PacketCronController extends Controller
         // "OtherNotes":"text notes",
         // "ABC":{"0":"VoiceNote1.aac","1":"VoiceNote2.aac","2":"VoiceNote3.aac"}}]';
 
+        $model = new JobCallResponses();
+       
+      $call_record = NodeRequestedDate::find()->where(['Status'=>0])->all();
+
+       foreach ($call_record as $value) {
+           
+       
+
+       $requested_data = $value->DataPacket;
+
+       $data = json_decode($requested_data);
 
 
-       $call_record = NodeRequestedDate::find()->where(['Status'=>0])->all();
-            echo count($call_record).'<br>';
-           foreach ($call_record as $value) {
 
-           $requested_data = $value->DataPacket;
-           $data = json_decode($requested_data);
+       foreach ($data as $key => $val)
+       {
+        $macAddress = $val->MacAddress;
+        $UserID = $val->UserID;
+        $JobID = $val->JobID;
+        $CompanyID = $val->CompanyID;
+        $ContactID = $val->ContactID;
+        $ResponseValues = $val->ResponseValues;
+        $ProfileInfo = $val->ProfileInfo;
+        $VoiceCall = $val->VoiceCall;
+        $OtherNotes = $val->OtherNotes;
+        $AudioNote = $val->{'ABC'};
+       }
+       
 
+        $AN = implode(',',(array)$AudioNote);
 
-               foreach ($data as $key => $val){
-                $macAddress = $val->MacAddress;
-                $UserID = $val->UserID;
-                $JobID = $val->JobID;
-                $CompanyID = $val->CompanyID;
-                $ContactID = $val->ContactID;
-                $ResponseValues = $val->ResponseValues;
-                $ProfileInfo = $val->ProfileInfo;
-                $VoiceCall = $val->VoiceCall;
-                $OtherNotes = $val->OtherNotes;
-               }
+        $model = new JobCallResponses();
+        $model->MacInfo = $macAddress;
+        $model->ContactID = $ContactID;
+        $model->ResponseID = $ResponseValues;
+        $model->UserID = $UserID;
+        $model->CallFilePath = $VoiceCall;
+        $model->OtherNote = $OtherNotes;
+        $model->PacketDtlID = $JobID;
 
-                    $model_req = new JobCallResponses();
-                    $model_req->MacInfo = $macAddress;
-                    $model_req->ContactID = $ContactID;
-                    $model_req->ResponseID = $ResponseValues;
-                    $model_req->UserID = $UserID;
-                    $model_req->CallFilePath = $VoiceCall;
-                    $model_req->OtherNote = $OtherNotes;
-                    $model_req->PacketDtlID = $JobID;
-
-                   $packet_record = JobPacketDtl::find()->where(['ID' => $JobID])->one();
+        $packet_record = JobPacketDtl::find()->where(['ID' => $JobID])->one();
                    $packet_data = $packet_record->PacketID;
 
-                    $model_req->JobPacketID = $packet_data;
-                    $model_req->AudioNote = 'safdsa';
-                    $model_req->BranchID = $packet_record->BranchID;
-                    $model_req->EnteredOn = date('Y-m-d H:i:s');
-                    $model_req->EnteredBy = 1;
+         $model->JobPacketID = $packet_data;
+        $model->AudioNote = $AN;
+        // echo '<pre>';
+        // print_r($AN);
+        // exit();
 
-                      if($model_req->save()) {
+        $model->BranchID = $packet_record->BranchID;
+        $model->EnteredOn = date('Y-m-d H:i:s');
+        $model->EnteredBy = 1;
 
-                      }else{
-                        print_r($model_req->getErrors());exit();
-                      }
+        
+      if($model->save()) {
 
-                // if($model_req->save()) {
-                //     $responce = array("Code"=>200,"message"=>"Save Sucessfully");
-                // }else{
-                //     $responce = array("Code"=>203,"message"=>"Not posted Properly");
-                // }
-            }
-            echo '1234';exit();
+      }else{
+        print_r($model->getErrors());exit();
+      }
 
+            // if($model->save()) {
+            //     $responce = array("Code"=>200,"message"=>"Save Sucessfully");
+            // }else{
+            //     $responce = array("Code"=>203,"message"=>"Not posted Properly");
+            // }
+        }
+        //echo $responce;exit();
+          echo 'asda';exit();
         
     }
     

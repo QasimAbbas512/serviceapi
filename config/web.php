@@ -3,8 +3,7 @@
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 $machine_db = require __DIR__ . '/machine_db.php';
-$contacts_db = require __DIR__ . '/contacts_data.php';
-
+$contact_db = require __DIR__ . '/contacts_data.php';
 
 $config = [
     'id' => 'AAA_CMS',
@@ -35,6 +34,11 @@ $config = [
             //'appendTimestamp' => TRUE,
         ],
 
+//        'session' => [
+//            'class' => 'yii\web\CacheSession',
+//            'name' => 'PHPNGSESSID'
+//        ],
+
         'authManager' => [
             'class' => 'yii\rbac\PhpManager',
             //'class' => 'yii\rbac\DbManager',
@@ -43,7 +47,7 @@ $config = [
         ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-            'cookieValidationKey' => 'qSHYNUI452AAAKll3lkjkl45klsds9sdLA1d',
+            'cookieValidationKey' => 'qSHYNUI452AAAKll3lkjkl45klsds9sdLA1a',
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
@@ -73,7 +77,7 @@ $config = [
         ],
         'db' => $db,
         'machine_db' => $machine_db,
-        'contacts_db'=>$contact_db,
+        'contact_db'=>$contact_db,
         /*
         'urlManager' => [
             'enablePrettyUrl' => true,
