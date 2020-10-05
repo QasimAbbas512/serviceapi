@@ -73,7 +73,7 @@ $config = [
         ],
         'db' => $db,
         'machine_db' => $machine_db,
-        'contacts_db' => $contacts_db,
+        'contacts_db'=>$contact_db,
         /*
         'urlManager' => [
             'enablePrettyUrl' => true,

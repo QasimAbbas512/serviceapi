@@ -44,7 +44,7 @@ class JobCallResponses extends \yii\db\ActiveRecord
      */
     public static function getDb()
     {
-        return Yii::$app->get('contacts_data');
+        return Yii::$app->get('contact_db');
     }
 
     /**
