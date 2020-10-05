@@ -1,6 +1,7 @@
 <?php
 namespace app\models;
 use Yii;
+use CommonFunctions;
 
 
 /**
@@ -57,6 +58,12 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     {
         return 'user';
     }
+
+    public function afterSave($insert, $changedAttributes){
+
+        CommonFunctions::UserInfo($this->id,1);
+    }
+
 
     /**
      * {@inheritdoc}
