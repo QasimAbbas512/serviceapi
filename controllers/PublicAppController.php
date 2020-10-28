@@ -67,9 +67,10 @@ class PublicAppController extends Controller
             $resp = array("Code" => 503, "msg" => "Please send valid token");
             $reponce = $resp;//json_encode($resp);
         }
-
-        $reponce = '[{"member_link":"1","guest_link":"2"}]';
-        $res = array("links"=>$reponce);
+       
+        $xyzs = array($reponce);
+        // $reponce = '[{"member_link":"1","guest_link":"2"}]';
+        $res = array('links'=>$xyzs);
 
         return $res;
     }
