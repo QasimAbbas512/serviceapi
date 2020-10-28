@@ -56,6 +56,20 @@ class LoginController extends Controller
      * cURL GET example
      */
     
+ 	public function actionCnic()
+   {
+      $CNIC = $_REQUEST['cnic'];
+
+      // $CNIC = '37405-4903238-2';
+         $employee_list = Employees::find()->where(['CNIC' => $CNIC])->one();
+	
+    $employee= array('name' => $employee_list->FullName,'Cell' =>$employee_list->CellNo,'Address' =>$employee_list->Address,'CNIC' =>$employee_list->CNIC,'Email' =>$employee_list->Email);
+    
+         $returnVal = json_encode($employee);
+           return $returnVal;
+    }
+
+
    public function actionPostman()
    {
        //$api_data_streem = file_get_contents("php://input");
