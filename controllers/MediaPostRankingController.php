@@ -59,6 +59,11 @@ class MediaPostRankingController extends \yii\web\Controller
                         $total_likes = 0;
 
                         $created_time_val = $k->created_time;
+                        if (!empty($k->message)) {
+                            $message = $k->message;
+                        } else {
+                            $message = '--';
+                        }
                         $id = $k->id;
                         $reactions_array = $k->reactions;
                         $shar_array = $k->shares;
@@ -91,6 +96,7 @@ class MediaPostRankingController extends \yii\web\Controller
                         $mdl->CreatedOn = $created_time;
                         $mdl->PostID = $post_id;
                         $mdl->TotalShare = $shares;
+                        $mdl->PostMessage = $message;
                         $mdl->CountDate = $date;
                         $mdl->MediaID = 1;
                         $mdl->MediaPageID = $page_row_id;
@@ -149,6 +155,11 @@ class MediaPostRankingController extends \yii\web\Controller
                         $total_likes = 0;
 
                         $created_time_val = $k->created_time;
+                        if (!empty($k->message)) {
+                            $message = $k->message;
+                        } else {
+                            $message = '--';
+                        }
                         $id = $k->id;
                         $reactions_array = $k->reactions;
                         $shar_array = $k->shares;
@@ -181,6 +192,7 @@ class MediaPostRankingController extends \yii\web\Controller
                         $mdl->CreatedOn = $created_time;
                         $mdl->PostID = $post_id;
                         $mdl->TotalShare = $shares;
+                        $mdl->PostMessage = $message;
                         $mdl->CountDate = $date;
                         $mdl->MediaID = 1;
                         $mdl->MediaPageID = $page_row_id;
@@ -239,6 +251,11 @@ class MediaPostRankingController extends \yii\web\Controller
                         $total_likes = 0;
 
                         $created_time_val = $k->created_time;
+                        if (!empty($k->message)) {
+                            $message = $k->message;
+                        } else {
+                            $message = '--';
+                        }
                         $id = $k->id;
                         $reactions_array = $k->reactions;
                         $shar_array = $k->shares;
@@ -271,6 +288,7 @@ class MediaPostRankingController extends \yii\web\Controller
                         $mdl->CreatedOn = $created_time;
                         $mdl->PostID = $post_id;
                         $mdl->TotalShare = $shares;
+                        $mdl->PostMessage = $message;
                         $mdl->CountDate = $date;
                         $mdl->MediaID = 1;
                         $mdl->MediaPageID = $page_row_id;
@@ -329,6 +347,11 @@ class MediaPostRankingController extends \yii\web\Controller
                         $total_likes = 0;
 
                         $created_time_val = $k->created_time;
+                        if (!empty($k->message)) {
+                            $message = $k->message;
+                        } else {
+                            $message = '--';
+                        }
                         $id = $k->id;
                         $reactions_array = $k->reactions;
                         $shar_array = $k->shares;
@@ -361,6 +384,7 @@ class MediaPostRankingController extends \yii\web\Controller
                         $mdl->CreatedOn = $created_time;
                         $mdl->PostID = $post_id;
                         $mdl->TotalShare = $shares;
+                        $mdl->PostMessage = $message;
                         $mdl->CountDate = $date;
                         $mdl->MediaID = 1;
                         $mdl->MediaPageID = $page_row_id;
@@ -419,6 +443,11 @@ class MediaPostRankingController extends \yii\web\Controller
                         $total_likes = 0;
 
                         $created_time_val = $k->created_time;
+                        if (!empty($k->message)) {
+                            $message = $k->message;
+                        } else {
+                            $message = '--';
+                        }
                         $id = $k->id;
                         $reactions_array = $k->reactions;
                         $shar_array = $k->shares;
@@ -451,6 +480,7 @@ class MediaPostRankingController extends \yii\web\Controller
                         $mdl->CreatedOn = $created_time;
                         $mdl->PostID = $post_id;
                         $mdl->TotalShare = $shares;
+                        $mdl->PostMessage = $message;
                         $mdl->CountDate = $date;
                         $mdl->MediaID = 1;
                         $mdl->MediaPageID = $page_row_id;
@@ -460,7 +490,6 @@ class MediaPostRankingController extends \yii\web\Controller
                         $mdl->EnteredBy = 2;
                         $mdl->BranchID = 2;
                         $mdl->IsDeleted = 'N';
-
                         $validation = MediaPostRanking::find()->where(['PostID' => $post_id])->andWhere(['MediaPageID' => $page_row_id])->andWhere(['CountDate' => $date])->one();
                         if (!empty($validation)) {
                             continue;
@@ -509,6 +538,11 @@ class MediaPostRankingController extends \yii\web\Controller
                         $total_likes = 0;
 
                         $created_time_val = $k->created_time;
+                        if (!empty($k->message)) {
+                            $message = $k->message;
+                        } else {
+                            $message = '--';
+                        }
                         $id = $k->id;
                         $reactions_array = $k->reactions;
                         $shar_array = $k->shares;
@@ -541,6 +575,7 @@ class MediaPostRankingController extends \yii\web\Controller
                         $mdl->CreatedOn = $created_time;
                         $mdl->PostID = $post_id;
                         $mdl->TotalShare = $shares;
+                        $mdl->PostMessage = $message;
                         $mdl->CountDate = $date;
                         $mdl->MediaID = 1;
                         $mdl->MediaPageID = $page_row_id;
@@ -599,6 +634,11 @@ class MediaPostRankingController extends \yii\web\Controller
                         $total_likes = 0;
 
                         $created_time_val = $k->created_time;
+                        if (!empty($k->message)) {
+                            $message = $k->message;
+                        } else {
+                            $message = '--';
+                        }
                         $id = $k->id;
                         $reactions_array = $k->reactions;
                         $shar_array = $k->shares;
@@ -631,6 +671,7 @@ class MediaPostRankingController extends \yii\web\Controller
                         $mdl->CreatedOn = $created_time;
                         $mdl->PostID = $post_id;
                         $mdl->TotalShare = $shares;
+                        $mdl->PostMessage = $message;
                         $mdl->CountDate = $date;
                         $mdl->MediaID = 1;
                         $mdl->MediaPageID = $page_row_id;
@@ -689,6 +730,11 @@ class MediaPostRankingController extends \yii\web\Controller
                         $total_likes = 0;
 
                         $created_time_val = $k->created_time;
+                        if (!empty($k->message)) {
+                            $message = $k->message;
+                        } else {
+                            $message = '--';
+                        }
                         $id = $k->id;
                         $reactions_array = $k->reactions;
                         $shar_array = $k->shares;
@@ -721,6 +767,7 @@ class MediaPostRankingController extends \yii\web\Controller
                         $mdl->CreatedOn = $created_time;
                         $mdl->PostID = $post_id;
                         $mdl->TotalShare = $shares;
+                        $mdl->PostMessage = $message;
                         $mdl->CountDate = $date;
                         $mdl->MediaID = 1;
                         $mdl->MediaPageID = $page_row_id;
@@ -779,6 +826,11 @@ class MediaPostRankingController extends \yii\web\Controller
                         $total_likes = 0;
 
                         $created_time_val = $k->created_time;
+                        if (!empty($k->message)) {
+                            $message = $k->message;
+                        } else {
+                            $message = '--';
+                        }
                         $id = $k->id;
                         $reactions_array = $k->reactions;
                         $shar_array = $k->shares;
@@ -811,6 +863,7 @@ class MediaPostRankingController extends \yii\web\Controller
                         $mdl->CreatedOn = $created_time;
                         $mdl->PostID = $post_id;
                         $mdl->TotalShare = $shares;
+                        $mdl->PostMessage = $message;
                         $mdl->CountDate = $date;
                         $mdl->MediaID = 1;
                         $mdl->MediaPageID = $page_row_id;
@@ -869,6 +922,11 @@ class MediaPostRankingController extends \yii\web\Controller
                         $total_likes = 0;
 
                         $created_time_val = $k->created_time;
+                        if (!empty($k->message)) {
+                            $message = $k->message;
+                        } else {
+                            $message = '--';
+                        }
                         $id = $k->id;
                         $reactions_array = $k->reactions;
                         $shar_array = $k->shares;
@@ -901,6 +959,7 @@ class MediaPostRankingController extends \yii\web\Controller
                         $mdl->CreatedOn = $created_time;
                         $mdl->PostID = $post_id;
                         $mdl->TotalShare = $shares;
+                        $mdl->PostMessage = $message;
                         $mdl->CountDate = $date;
                         $mdl->MediaID = 1;
                         $mdl->MediaPageID = $page_row_id;
@@ -959,6 +1018,11 @@ class MediaPostRankingController extends \yii\web\Controller
                         $total_likes = 0;
 
                         $created_time_val = $k->created_time;
+                        if (!empty($k->message)) {
+                            $message = $k->message;
+                        } else {
+                            $message = '--';
+                        }
                         $id = $k->id;
                         $reactions_array = $k->reactions;
                         $shar_array = $k->shares;
@@ -991,6 +1055,7 @@ class MediaPostRankingController extends \yii\web\Controller
                         $mdl->CreatedOn = $created_time;
                         $mdl->PostID = $post_id;
                         $mdl->TotalShare = $shares;
+                        $mdl->PostMessage = $message;
                         $mdl->CountDate = $date;
                         $mdl->MediaID = 1;
                         $mdl->MediaPageID = $page_row_id;
@@ -1049,6 +1114,11 @@ class MediaPostRankingController extends \yii\web\Controller
                         $total_likes = 0;
 
                         $created_time_val = $k->created_time;
+                        if (!empty($k->message)) {
+                            $message = $k->message;
+                        } else {
+                            $message = '--';
+                        }
                         $id = $k->id;
                         $reactions_array = $k->reactions;
                         $shar_array = $k->shares;
@@ -1081,6 +1151,7 @@ class MediaPostRankingController extends \yii\web\Controller
                         $mdl->CreatedOn = $created_time;
                         $mdl->PostID = $post_id;
                         $mdl->TotalShare = $shares;
+                        $mdl->PostMessage = $message;
                         $mdl->CountDate = $date;
                         $mdl->MediaID = 1;
                         $mdl->MediaPageID = $page_row_id;
@@ -1139,6 +1210,11 @@ class MediaPostRankingController extends \yii\web\Controller
                         $total_likes = 0;
 
                         $created_time_val = $k->created_time;
+                        if (!empty($k->message)) {
+                            $message = $k->message;
+                        } else {
+                            $message = '--';
+                        }
                         $id = $k->id;
                         $reactions_array = $k->reactions;
                         $shar_array = $k->shares;
@@ -1171,6 +1247,7 @@ class MediaPostRankingController extends \yii\web\Controller
                         $mdl->CreatedOn = $created_time;
                         $mdl->PostID = $post_id;
                         $mdl->TotalShare = $shares;
+                        $mdl->PostMessage = $message;
                         $mdl->CountDate = $date;
                         $mdl->MediaID = 1;
                         $mdl->MediaPageID = $page_row_id;
@@ -1229,6 +1306,11 @@ class MediaPostRankingController extends \yii\web\Controller
                         $total_likes = 0;
 
                         $created_time_val = $k->created_time;
+                        if (!empty($k->message)) {
+                            $message = $k->message;
+                        } else {
+                            $message = '--';
+                        }
                         $id = $k->id;
                         $reactions_array = $k->reactions;
                         $shar_array = $k->shares;
@@ -1261,6 +1343,7 @@ class MediaPostRankingController extends \yii\web\Controller
                         $mdl->CreatedOn = $created_time;
                         $mdl->PostID = $post_id;
                         $mdl->TotalShare = $shares;
+                        $mdl->PostMessage = $message;
                         $mdl->CountDate = $date;
                         $mdl->MediaID = 1;
                         $mdl->MediaPageID = $page_row_id;
