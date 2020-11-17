@@ -38,25 +38,25 @@ class JobPacketDtlController extends Controller
     
     public function actionPacketDtlMaking()
     {
-        $sql = 'update job_packets set PostsStatus = 1 limit = 10 '
+        $sql = 'update job_packets set PostsStatus = 1 limit = 10 ';
             Yii::$app->machine_db->createCommand($sql)->execute();
 
              $Packet_record = JobPackets::find()->where('PostsStatus = 0')->all();
 
              if(!empty($Packet_record)) {
 
-                 foreach ($call_record as $value) {
+                 foreach ($Packet_record as $value) {
 
                            $packetID = $value->ID;
                            
-            $sqL = 'update contact_number_list set Assigned = Y limit = 100 '
+            $sqL = 'update contact_number_list set Assigned = Y limit = 100 ';
             Yii::$app->machine_db->createCommand($sqL)->execute();
 
              $contact_record = ContactNumberList::find()->where('Assigned = N')->all();
 
              if(!empty($contact_record)) {
 
-                 foreach ($call_record as $value) {
+                 foreach ($contact_record as $value) {
 
                     $contactID = $value->ID;
                     $contactNo = $value->ContactNumber;
@@ -89,6 +89,6 @@ class JobPacketDtlController extends Controller
 
         exit();
     }
-    }
+
     
 }

@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 
+use app\models\ClientInfo;
 use Yii;
 use yii\web\Controller;
 use app\models\Employees;
@@ -77,26 +78,18 @@ class PublicAppController extends Controller
     }
 
 
-    public function actionCnic()
-   {
-      $CNIC = $_REQUEST['cnic'];
+    public function actionClientLogin()
+    {
+        $user = $_REQUEST['user'];
+        $pass = $_REQUEST['pass'];
 
-     if(!empty($CNIC)) {
-
-         $employee_list = Employees::find()->where(['CNIC' => $CNIC])->one();
-    
-            $resp= array('name' => $employee_list->FullName,'Cell' =>$employee_list->CellNo,'Address' =>$employee_list->Address,'CNIC' =>$employee_list->CNIC,'Email' =>$employee_list->Email);
-            $reponce = $resp;
-        }else{
-
-            $resp = array("Code" => 503, "msg" => "Please send valid token");
-            $reponce = $resp;//json_encode($resp);
-        }
-       
+        // $CNIC = '37405-4903238-2';
+        $client_info = ClientInfo::find()->where(['UserName' => $user])->andWhere(['Password' => $pass])->andWhere(['Active' => 'Y'])->andWhere(AppConstants::get_active_record_only)->one();
+        $resp = array('name' => $client_info->FirstName, 'LastName' => $client_info->LastName, 'Cnic' => $client_info->Cnic, 'UserName' => $client_info->UserName);
+        $reponce = $resp;
         $xyzs = array($reponce);
         // $reponce = '[{"member_link":"1","guest_link":"2"}]';
-        $res = array('client'=>$xyzs);
-
-        return $res;
+        $res = array('client' => $xyzs);
+        return json_encode($res);
     }
 }
