@@ -80,16 +80,19 @@ class PublicAppController extends Controller
 
     public function actionClientLogin()
     {
-        $user = $_REQUEST['user'];
-        $pass = $_REQUEST['pass'];
+        $user = $_REQUEST["user"];
+        $pass = $_REQUEST["pass"];
 
         // $CNIC = '37405-4903238-2';
         $client_info = ClientInfo::find()->where(['UserName' => $user])->andWhere(['Password' => $pass])->andWhere(['Active' => 'Y'])->andWhere(AppConstants::get_active_record_only)->one();
-        $resp = array('name' => $client_info->FirstName, 'LastName' => $client_info->LastName, 'Cnic' => $client_info->Cnic, 'UserName' => $client_info->UserName);
+        $resp = array("name"=>$client_info->FirstName, "LastName"=>$client_info->LastName, "Cnic"=>$client_info->Cnic, "UserName"=>$client_info->UserName);
         $reponce = $resp;
         $xyzs = array($reponce);
+//        $abc= json_encode($xyzs);
+//        echo '<pre>';
+//        print_r(json_decode($abc));exit();
         // $reponce = '[{"member_link":"1","guest_link":"2"}]';
-        $res = array('client' => $xyzs);
-        return json_encode($res);
+        $res = array('client'=>$xyzs);
+        return $res;
     }
 }
