@@ -80,7 +80,7 @@ class PublicAppController extends Controller
         return $res;
     }
 
-    public function actionClientLogin()
+    public function actionClientLogin_x()
     {
         $user = $_REQUEST['user'];
         $pass = $_REQUEST['pass'];
@@ -110,7 +110,7 @@ class PublicAppController extends Controller
     }
 
 
-    public function actionClientLogin_x()
+    public function actionClientLogin()
     {
         $user = $_REQUEST['user'];
         $pass = $_REQUEST['pass'];
@@ -121,7 +121,8 @@ class PublicAppController extends Controller
         $investment_info = ClientInvestment::find()->where(['ClientID' => $client_id])->andWhere(['Active' => 'Y'])->andWhere(AppConstants::get_active_record_only)->one();
         $project_id = $investment_info->ProjectID;
         $project_info = Projects::find()->where(['ID'=> $project_id])->andWhere(['Active' => 'Y'])->andWhere(AppConstants::get_active_record_only)->one();
-        $resp = array("name"=>$client_info->FirstName, "LastName"=>$client_info->LastName, "Cnic"=>$client_info->Cnic, "MemberID"=>$client_info->UserName, "Project"=>$project_info->ProjectName, "ContractValidity"=>$investment_info->ContractExpiryDate);
+        $client_profile_img = "http://aaacrm.net/cms/web/emp_images/202011241545245XUgrsa.jpg";
+        $resp = array("name"=>$client_info->FirstName, "LastName"=>$client_info->LastName, "Cnic"=>$client_info->Cnic, "MemberID"=>$client_info->UserName, "ProfileImg" => $client_profile_img, "Project"=>$project_info->ProjectName, "ContractValidity"=>$investment_info->ContractExpiryDate);
         $reponce = $resp;
         $xyzs = array($reponce);
 //        $abc= json_encode($xyzs);
