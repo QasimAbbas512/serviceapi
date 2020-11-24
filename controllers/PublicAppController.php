@@ -80,8 +80,37 @@ class PublicAppController extends Controller
         return $res;
     }
 
-
     public function actionClientLogin()
+    {
+        $user = $_REQUEST['user'];
+        $pass = $_REQUEST['pass'];
+
+        $client_info = ClientInfo::find()->where(['UserName' => $user])->andWhere(['Password' => $pass])->andWhere(['Active' => 'Y'])->andWhere(AppConstants::get_active_record_only)->one();
+        if(!empty($client_info)) {
+            $client_id = $client_info->ID;
+            $investment_info = ClientInvestment::find()->where(['ClientID' => $client_id])->andWhere(['Active' => 'Y'])->andWhere(AppConstants::get_active_record_only)->one();
+            $project_id = $investment_info->ProjectID;
+            $project_info = Projects::find()->where(['ID' => $project_id])->andWhere(['Active' => 'Y'])->andWhere(AppConstants::get_active_record_only)->one();
+
+            for ($i = 1; $i <= 3; $i++) {
+                $projects[] = array("Project" => $project_info->ProjectName . '-' . $i, "ContractValidity" => $investment_info->ContractExpiryDate . '-' . $i, "TotalInvestment" => 10000000, "MonthlyInsentive" => 100000, "TillDateAmountIncentive" => 400000, "Recieved" => 300000, "Balance" => 100000);
+            }
+
+            $client_profile_img = "http://aaacrm.net/cms/web/emp_images/202011241545245XUgrsa.jpg";
+            $company_profile_img = "http://aaacrm.net/cms/web/logo_image/20200827170716aaa_logo.png";
+
+            $clientProfile = array("name" => $client_info->FirstName, "LastName" => $client_info->LastName, "Cnic" => $client_info->Cnic, "MemberID" => "AAA-587", "ProfileImg" => $client_profile_img);
+            $companyProfile = array("CompanyName" => "AAA Associates", "WhatsAppNo" => "090078601", "Support" => "+9286989768768", "logo" => $company_profile_img);
+
+            $res = array("client" => $clientProfile, "investments" => $projects, "CompanyProfile" => $companyProfile);
+        }else{
+            $res = array("exception" => "Invelid user or password");
+        }
+        return $res;
+    }
+
+
+    public function actionClientLogin_x()
     {
         $user = $_REQUEST['user'];
         $pass = $_REQUEST['pass'];
