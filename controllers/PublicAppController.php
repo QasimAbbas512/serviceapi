@@ -80,7 +80,7 @@ class PublicAppController extends Controller
         return $res;
     }
 
-    public function actionClientLogin_x()
+    public function actionClientLogin()
     {
         $user = $_REQUEST['user'];
         $pass = $_REQUEST['pass'];
@@ -102,15 +102,17 @@ class PublicAppController extends Controller
             $clientProfile = array("name" => $client_info->FirstName, "LastName" => $client_info->LastName, "Cnic" => $client_info->Cnic, "MemberID" => "AAA-587", "ProfileImg" => $client_profile_img);
             $companyProfile = array("CompanyName" => "AAA Associates", "WhatsAppNo" => "090078601", "Support" => "+9286989768768", "logo" => $company_profile_img);
 
-            $res = array("client" => $clientProfile, "investments" => $projects, "CompanyProfile" => $companyProfile);
+            //$res = array("client" => $clientProfile, "investments" => $projects, "CompanyProfile" => $companyProfile);
+            $res = array("client" => array($clientProfile),"CompanyProfile" => array($companyProfile),"investments" => $projects);
         }else{
             $res = array("exception" => "Invelid user or password");
         }
+
         return $res;
     }
 
 
-    public function actionClientLogin()
+    public function actionClientLogin_x()
     {
         $user = $_REQUEST['user'];
         $pass = $_REQUEST['pass'];
@@ -130,6 +132,9 @@ class PublicAppController extends Controller
 //        print_r(json_decode($abc));exit();
         // $reponce = '[{"member_link":"1","guest_link":"2"}]';
         $res = array('client'=>$xyzs);
+//        echo '<pre>';
+//        print_r($res);
+//        exit();
         return $res;
     }
 
