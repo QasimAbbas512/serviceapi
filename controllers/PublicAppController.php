@@ -90,9 +90,11 @@ class PublicAppController extends Controller
     {
         $token_info = $_REQUEST['verifyme'];
         if($token_info == AppConstants::android_public_app_gallery_token) {
-            $gallery_info = ProjectGallery::find()->where(['ImageFor'=>'android'])->andwhere(AppConstants::get_active_record_only)->orderBy(['rand()' => SORT_DESC])->limit(6);
-            if (!empty($gallery_info)) {
+            $gallery_info = ProjectGallery::find()->where(['ImageFor'=>'android'])->andwhere(AppConstants::get_active_record_only)->orderBy(['rand()' => SORT_DESC])->limit(6)->all();
 
+            if (!empty($gallery_info)) {
+                $res = '';
+                $gallry_images = '';
                 foreach ($gallery_info as $v) {
 
                     $img_name = $v->ImageName;
@@ -105,7 +107,7 @@ class PublicAppController extends Controller
                     $gallry_images[] = array("img_link" => $img_link, "ProjectName" => $project_name);
                 }
 
-                $res = array("investments" => $gallry_images);
+                $res = array("ImageLinks" => $gallry_images);
             } else {
                 $res = array("exception" => "No Image Found");
             }
