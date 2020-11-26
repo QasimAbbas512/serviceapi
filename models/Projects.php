@@ -17,6 +17,7 @@ use Yii;
  * @property int|null $DeletedBy
  * @property string|null $DeletedOn
  * @property int $BranchID
+ * @property int|null $CompanyID
  *
  * @property ClientInvestment[] $clientInvestments
  * @property ProjectGallery[] $projectGalleries
@@ -31,6 +32,26 @@ class Projects extends \yii\db\ActiveRecord
         return 'projects';
     }
 
+
+    public function beforeSave($insert) {
+
+        if ($insert) {
+            $this->CompanyID = Yii::$app->session->get('company_id');
+
+        }else{//update event
+
+            $this->CompanyID = Yii::$app->session->get('company_id');
+            CommonFunctions::selectProjectInfo($this->ID,$this->CompanyID,1);
+        }
+
+        return parent::beforeSave($insert);
+    }
+
+    public function afterSave($insert, $changedAttributes){
+
+        CommonFunctions::selectProjectInfo($this->ID,$this->CompanyID,1);
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -40,7 +61,7 @@ class Projects extends \yii\db\ActiveRecord
             [['ProjectName', 'Description', 'EnteredOn', 'EnteredBy', 'BranchID'], 'required'],
             [['Description'], 'string'],
             [['EnteredOn', 'DeletedOn'], 'safe'],
-            [['EnteredBy', 'DeletedBy', 'BranchID'], 'integer'],
+            [['EnteredBy', 'DeletedBy', 'BranchID', 'CompanyID'], 'integer'],
             [['ProjectName'], 'string', 'max' => 20],
             [['Active', 'IsDeleted'], 'string', 'max' => 1],
         ];
@@ -62,6 +83,7 @@ class Projects extends \yii\db\ActiveRecord
             'DeletedBy' => 'Deleted By',
             'DeletedOn' => 'Deleted On',
             'BranchID' => 'Branch ID',
+            'CompanyID' => 'Company ID',
         ];
     }
 

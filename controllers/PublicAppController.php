@@ -5,6 +5,7 @@ namespace app\controllers;
 
 use app\models\ClientInfo;
 use app\models\ClientInvestment;
+use app\models\ProjectGallery;
 use app\models\Projects;
 use Yii;
 use yii\web\Controller;
@@ -77,6 +78,40 @@ class PublicAppController extends Controller
 //        {"client":[{"name":"junaid","LastName":"mehmood","Cnic":"1234567890","UserName":"jmehmood"}]}
         $res = array('links'=>$xyzs);
 
+        return $res;
+    }
+
+    /**
+     * @return array
+     * following action will return active images of projects randomly for mobile screens only
+     * these images should be very light weight.
+     */
+    public function actionAppSliderGallery()
+    {
+        $token_info = $_REQUEST['verifyme'];
+        if($token_info == AppConstants::android_public_app_gallery_token) {
+            $gallery_info = ProjectGallery::find()->where(AppConstants::get_active_record_only)->orderBy(['rand()' => SORT_DESC])->limit(6);
+            if (!empty($gallery_info)) {
+
+                foreach ($gallery_info as $v) {
+
+                    $img_name = $v->ImageName;
+                    $project_info = CommonFunctions::selectProjectInfo($v->ProjectID, $v->CompanyID);
+                    $project_name = $project_info->ProjectName;
+                    $caption = $project_info->Description;
+                    $img_link = AppConstants::ProjectImgUrl . '/' . $img_name;
+                    $project_name = $project_name;
+
+                    $gallry_images[] = array("img_link" => $img_link, "ProjectName" => $project_name);
+                }
+
+                $res = array("investments" => $gallry_images);
+            } else {
+                $res = array("exception" => "No Image Found");
+            }
+        }else{
+            $res = array("exception" => "Invelid Token Info");
+        }
         return $res;
     }
 
