@@ -90,7 +90,7 @@ class PublicAppController extends Controller
     {
         $token_info = $_REQUEST['verifyme'];
         if($token_info == AppConstants::android_public_app_gallery_token) {
-            $gallery_info = ProjectGallery::find()->where(AppConstants::get_active_record_only)->orderBy(['rand()' => SORT_DESC])->limit(6);
+            $gallery_info = ProjectGallery::find()->where(['ImageFor'=>'android'])->andwhere(AppConstants::get_active_record_only)->orderBy(['rand()' => SORT_DESC])->limit(6);
             if (!empty($gallery_info)) {
 
                 foreach ($gallery_info as $v) {
