@@ -90,21 +90,23 @@ class PublicAppController extends Controller
     {
         $token_info = $_REQUEST['verifyme'];
         if($token_info == AppConstants::android_public_app_gallery_token) {
-            $gallery_info = ProjectGallery::find()->where(['ImageFor'=>'android'])->andwhere(AppConstants::get_active_record_only)->orderBy(['rand()' => SORT_DESC])->limit(6)->all();
+            $gallery_info = ProjectGallery::find()->where(['ImageFor'=>'android'])->andwhere(AppConstants::get_active_record_only)->orderBy(['rand()' => SORT_DESC])->limit(1)->all();
 
             if (!empty($gallery_info)) {
                 $res = '';
-                $gallry_images = '';
+               // $gallry_images = '';
+                $i=0;
                 foreach ($gallery_info as $v) {
-
+                    $i++;
                     $img_name = $v->ImageName;
                     $project_info = CommonFunctions::selectProjectInfo($v->ProjectID, $v->CompanyID);
                     $project_name = $project_info->ProjectName;
                     $caption = $project_info->Description;
                     $img_link = AppConstants::ProjectImgUrl . '/' . $img_name;
                     $project_name = $project_name;
+                    $value_name = 'slider'.$i;
 
-                    $gallry_images[] = array("img_link" => $img_link, "ProjectName" => $project_name);
+                    $gallry_images[] = array($value_name => $img_link, "ProjectName" => $project_name);
                 }
 
                 $res = array("ImageLinks" => $gallry_images);
@@ -130,13 +132,13 @@ class PublicAppController extends Controller
             $project_info = Projects::find()->where(['ID' => $project_id])->andWhere(['Active' => 'Y'])->andWhere(AppConstants::get_active_record_only)->one();
 
             for ($i = 1; $i <= 3; $i++) {
-                $projects[] = array("Project" => $project_info->ProjectName . '-' . $i, "ContractValidity" => $investment_info->ContractExpiryDate . '-' . $i, "TotalInvestment" => 10000000, "MonthlyInsentive" => 100000, "TillDateAmountIncentive" => 400000, "Recieved" => 300000, "Balance" => 100000);
+                $projects[] = array("Project" => $project_info->ProjectName, "ContractValidity" => $investment_info->ContractExpiryDate, "TotalInvestment" => 10000000, "MonthlyInsentive" => 100000, "TillDateAmountIncentive" => 400000, "Recieved" => 300000, "Balance" => 100000);
             }
 
             $client_profile_img = "http://aaacrm.net/cms/web/emp_images/202011241545245XUgrsa.jpg";
             $company_profile_img = "http://aaacrm.net/cms/web/logo_image/20200827170716aaa_logo.png";
 
-            $clientProfile = array("name" => $client_info->FirstName, "LastName" => $client_info->LastName, "Cnic" => $client_info->Cnic, "MemberID" => "AAA-587", "ProfileImg" => $client_profile_img);
+            $clientProfile = array("name" => ucfirst($client_info->FirstName), "LastName" => ucfirst($client_info->LastName), "Cnic" => $client_info->Cnic, "MemberID" => "AAA-587", "ProfileImg" => $client_profile_img);
             $companyProfile = array("CompanyName" => "AAA Associates", "WhatsAppNo" => "090078601", "Support" => "+9286989768768", "logo" => $company_profile_img);
 
             //$res = array("client" => $clientProfile, "investments" => $projects, "CompanyProfile" => $companyProfile);
