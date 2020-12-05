@@ -9,8 +9,8 @@
 defined('YII_DEBUG') or define('YII_DEBUG', true);
 defined('YII_ENV') or define('YII_ENV', 'dev');
 
-require __DIR__ . '/../../cms/vendor/autoload.php';
-require __DIR__ . '/../../cms/vendor/yiisoft/yii2/Yii.php';
+require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/../vendor/yiisoft/yii2/Yii.php';
 
 Yii::$classMap['CommonFunctions'] = __DIR__ . '/../../aaaCentralFiles/CommonFunctions.php';
 Yii::$classMap['AppConstants'] = __DIR__ . '/../../aaaCentralFiles/CommonFunctions.php';
