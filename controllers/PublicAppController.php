@@ -132,7 +132,22 @@ class PublicAppController extends Controller
             $project_info = Projects::find()->where(['ID' => $project_id])->andWhere(['Active' => 'Y'])->andWhere(AppConstants::get_active_record_only)->one();
 
             for ($i = 1; $i <= 3; $i++) {
-                $projects[] = array("Project" => $project_info->ProjectName, "ContractValidity" => $investment_info->ContractExpiryDate, "TotalInvestment" => 10000000, "MonthlyInsentive" => 100000, "TillDateAmountIncentive" => 400000, "Recieved" => 300000, "Balance" => 100000);
+                $project_name = $project_info->ProjectName;
+                $validity = $investment_info->ContractExpiryDate;
+                $month_instive = 100000;
+                $t_inv = 10000000;
+                $t_date_inst = 400000;
+                $rcved = 300000;
+                $bln = 100000;
+                if($i == 1){
+                    $concat = '';
+                    $project_name = 'Arcade-I';
+                }else{
+                    $concat = $i;
+                }
+                if($i == 2){$project_name = 'Arcade-II';$validity = '2022-08-12'; $t_inv = 250000; $month_instive = 300000; $t_date_inst = 50000; $rcved = 700512;$bln = 102500;}
+                if($i == 3){$project_name = 'Arcade-III';$validity = '2026-12-31'; $t_inv = 1500000; $month_instive = 400000; $t_date_inst = 2503698; $rcved = 102590; $bln = 25000;}
+                $projects[] = array("Project" => $project_name, "ContractValidity" => $validity, "TotalInvestment" => $t_inv, "MonthlyInsentive" => $month_instive, "TillDateAmountIncentive" => $t_date_inst, "Recieved" => $rcved, "Balance" => $bln);
             }
 
             $client_profile_img = "http://aaacrm.net/cms/web/emp_images/202011241545245XUgrsa.jpg";
