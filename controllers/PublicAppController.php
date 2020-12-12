@@ -90,7 +90,8 @@ class PublicAppController extends Controller
     {
         $token_info = $_REQUEST['verifyme'];
         if($token_info == AppConstants::android_public_app_gallery_token) {
-            $gallery_info = ProjectGallery::find()->where(['ImageFor'=>'android'])->andwhere(AppConstants::get_active_record_only)->orderBy(['rand()' => SORT_DESC])->limit(7)->all();
+            $gallery_info = ProjectGallery::find()->where(['ImageFor'=>'android'])->andwhere(AppConstants::get_active_record_only)->groupBy('ProjectID')->orderBy(['rand()' => SORT_DESC])->limit(8)->all();
+            //$gallery_info = ProjectGallery::find()->where(['ImageFor'=>'android'])->andwhere(AppConstants::get_active_record_only)->orderBy(['rand()' => SORT_DESC])->limit(7)->all();
 
             if (!empty($gallery_info)) {
                 $res = '';
@@ -104,7 +105,7 @@ class PublicAppController extends Controller
                     $caption = $project_info->Description;
                     $img_link = AppConstants::ProjectImgUrl . '/' . $img_name;
                     $project_name = $project_name;
-                    $value_name = 'slider'.$i;
+                    $value_name = 'slider';
 
                     $gallry_images[] = array($value_name => $img_link, "ProjectName" => $project_name);
                 }
@@ -193,7 +194,7 @@ class PublicAppController extends Controller
             $company_profile_img = "http://aaacrm.net/aaacms/web/logo_image/20200827170716aaa_logo.png";
 
             $clientProfile = array("name" => ucfirst($client_info->FirstName), "LastName" => ucfirst($client_info->LastName), "Cnic" => $client_info->Cnic, "MemberID" => "AAA-587", "ProfileImg" => $client_profile_img);
-            $companyProfile = array("CompanyName" => "AAA Associates", "WhatsAppNo" => "090078601", "Support" => "+9286989768768", "logo" => $company_profile_img);
+            $companyProfile = array("CompanyName" => "AAA Associates", "WhatsAppNo" => $company_info->WhattsappNumber, "Support" => $company_info-> 	CustomerSupport, "logo" => $company_profile_img);
 
             //$res = array("client" => $clientProfile, "investments" => $projects, "CompanyProfile" => $companyProfile);
             $res = array("client" => array($clientProfile),"CompanyProfile" => array($companyProfile),"investments" => $projects,"CompanyProjects"=>$company_active_projects);
