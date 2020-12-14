@@ -179,4 +179,56 @@ class LoginController extends Controller
         }
 
     }
+
+    public function actionCallResponse()
+    {
+        //$api_data_streem = file_get_contents("php://input");
+
+        $api_data_streem = '[{  "contact_id":"116",
+                                "emei":"1265863937hhiy87",
+                                "user_id":"116";
+                                 }]';
+
+        $data = json_decode($api_data_streem);
+
+        if (!empty($data)) {
+//            echo '<pre>';
+//            print_r($data);
+//            exit();
+            foreach ($data as $v) {
+                $contact_id = $v->contact_id;
+                $emei = $v->emei;
+                $user_id = $v->user_id;
+            }
+
+            $call_list = Yii::$app->contact_db->createCommand("SELECT jp.ID, jcr.JobPacketID, jcr.PacketDtlID, jcr.ContactID, jcr.ResponseID, jcr.CallFilePath, jcr.AudioNote, jcr.OtherNote
+                                                                FROM job_packet_dtl jp, job_call_responses jcr
+                                                                WHERE jp.ID = jcr.PacketDtlID and jcr.ContactID = '".$contact_id."' and jp.BranchID = jcr.BranchID and jcr.UserID = '".$user_id."' and jcr.MacInfo = '".$emei."' ")->queryAll();
+
+            if (!empty($call_list)) {
+                $call_response = CommonFunctions::arrayToObject($call_list);
+
+                foreach($call_response as $v){
+                    $call_responses[] = array('CallFilePath'=>$v->CallFilePath, 'AudioNote'=>$v->AudioNote, 'OtherNote'=>$v->OtherNote);
+                }
+
+                $responce_message = array('Code' => '200', 'message' => 'Response Fetched!');
+                $data_pkt = array('data'=>$call_responses);
+            }else{
+                $responce_message = array('Code' => '400', 'message' => 'Response Not Fetched!');
+                $data_pkt = array("");
+                $responce = array('message'=>$responce_message);
+
+            }
+
+            $responce = array('message'=>$responce_message,'data'=>$data_pkt);
+            $returnVal = json_encode($responce);
+//            echo '<pre>';
+//            print_r($responce);
+//            exit();
+            return $returnVal;
+        }
+
+    }
+
 }
