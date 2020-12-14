@@ -45,7 +45,7 @@ class LoginController extends Controller
 
      public function beforeAction($action)
     {
-        if ($action->id == 'call' || $action->id == 'postman') {
+        if ($action->id == 'call' || $action->id == 'verify') {
             $this->enableCsrfValidation = false;
         }
 
@@ -72,11 +72,11 @@ class LoginController extends Controller
 
    public function actionVerify()
    {
-       //$api_data_streem = file_get_contents("php://input");
+       $api_data_streem = file_get_contents("php://input");
 
-          $api_data_streem = '[{  "username":"admin",
-                                 "pass":"admin123",
-                                 "EMEI":"msxnjsxdhuh7677mmnk"}]';
+//          $api_data_streem = '[{  "username":"laiba@aaa.com",
+//                                 "pass":"laiba123",
+//                                 "EMEI":"E34534dfgd"}]';
 
        $data = json_decode($api_data_streem);
        if(!empty($data)) {
@@ -87,7 +87,12 @@ class LoginController extends Controller
                $emei_no = $v->EMEI;
            }
 
-           $user_record = User::find()->where(['UserName' => $user])->andWhere(['PasswordKey' => $pass])->andWhere(['Active'=>'Y'])->andWhere(AppConstants::get_active_record_only)->one();
+           $user_record = User::find()->where(['UserName' => $user])->andWhere(['PasswordKey' => $pass])->andWhere(AppConstants::get_active_record_only)->one();
+           //$user_record = Yii::$app->db->createCommand("select * from user where UserName = '".$user."' and PasswordKey = '".$pass."'")->queryAll();
+           //echo "select * from user where UserName = '".$user."' and PasswordKey = '".$pass."'";exit();
+//            echo '<pre>';
+//            print_r($user_record);
+//            exit();
            if (!empty($user_record)) {
                $emp_name = 'ABC';//CommonFunctions::printEmployeeName($user_record->EmpID,$user_record->BranchID);
                $responce_message = array('Code' => '200', 'message' => 'Login Sucessful');
@@ -108,9 +113,9 @@ class LoginController extends Controller
 
                $responce = array('message'=>$responce_message,'date'=>$responce_data,'emei_validation'=>$emei_valid_aray,'ResponseOptions'=>$response_options);
                $returnVal = json_encode($responce);
-               echo '<pre>';
-               print_r($responce);
-               exit();
+//               echo '<pre>';
+//               print_r($responce);
+//               exit();
                return $returnVal;
            }
        }else{
