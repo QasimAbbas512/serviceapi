@@ -70,7 +70,7 @@ class LoginController extends Controller
     }
 
 
-   public function actionPostman()
+   public function actionVerify()
    {
        //$api_data_streem = file_get_contents("php://input");
 
