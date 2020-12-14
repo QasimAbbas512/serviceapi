@@ -135,5 +135,43 @@ class LoginController extends Controller
         return json_encode($res);
     }
 
-    
+    public function actionNumberList()
+    {
+        //$api_data_streem = file_get_contents("php://input");
+
+        $api_data_streem = '[{  "id":"183"
+                                 }]';
+
+        $data = json_decode($api_data_streem);
+        if (!empty($data)) {
+            foreach ($data as $v) {
+
+                $employee_id = $v->EmployeeId;
+               $branch_id =  Yii::$app->session->get('branch_id');
+            }
+
+            $employee_list = Yii::$app->media_db->createCommand("SELECT jp.PacketID,jp.ContactID,jp.ContactNumber,jp.ContactNotes
+                                                                    FROM job_packet_dtl jp, employee_job_packet_dtl ejp
+                                                                    WHERE ejp.PacketID = jp.PacketID and ejp.EmployeeID = '".$employee_id."' and ejp.BranchID = jp.BranchID and ejp.Status = 0 ")->queryAll();
+
+            if (!empty($employee_list)) {
+
+                $responce_message = array('Code' => '200', 'message' => 'Packet Fetched!');
+                $responce_data = array('ContactNumber'=>$employee_list->ContactNumber, 'ContactNotes'=>$employee_list->ContactNotes);
+                $responce = array('message'=>$responce_message,'data'=>$responce_data);
+            }else{
+                $responce_message = array('Code' => '400', 'message' => 'Packet Not Fetched!');
+                $responce = array('message'=>$responce_message);
+
+            }
+
+            $responce = array('message'=>$responce_message,'data'=>$responce_data);
+            $returnVal = json_encode($responce);
+            echo '<pre>';
+            print_r($responce);
+            exit();
+            return $returnVal;
+        }
+
     }
+}
