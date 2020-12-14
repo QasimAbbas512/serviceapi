@@ -139,37 +139,42 @@ class LoginController extends Controller
     {
         //$api_data_streem = file_get_contents("php://input");
 
-        $api_data_streem = '[{  "id":"183"
+        $api_data_streem = '[{  "id":"116"
                                  }]';
 
         $data = json_decode($api_data_streem);
+
         if (!empty($data)) {
             foreach ($data as $v) {
 
-                $employee_id = $v->EmployeeId;
-               $branch_id =  Yii::$app->session->get('branch_id');
+                $employee_id = $v->id;
             }
 
-            $employee_list = Yii::$app->media_db->createCommand("SELECT jp.PacketID,jp.ContactID,jp.ContactNumber,jp.ContactNotes
+            $employee_list = Yii::$app->contact_db->createCommand("SELECT jp.PacketID,jp.ContactID,jp.ContactNumber,jp.ContactNotes
                                                                     FROM job_packet_dtl jp, employee_job_packet_dtl ejp
                                                                     WHERE ejp.PacketID = jp.PacketID and ejp.EmployeeID = '".$employee_id."' and ejp.BranchID = jp.BranchID and ejp.Status = 0 ")->queryAll();
 
             if (!empty($employee_list)) {
+                $employee_list = CommonFunctions::arrayToObject($employee_list);
+
+                foreach($employee_list as $v){
+                $number_list[] = array('ContactNumber'=>$v->ContactNumber, 'ContactNotes'=>$v->ContactNotes);
+                }
 
                 $responce_message = array('Code' => '200', 'message' => 'Packet Fetched!');
-                $responce_data = array('ContactNumber'=>$employee_list->ContactNumber, 'ContactNotes'=>$employee_list->ContactNotes);
-                $responce = array('message'=>$responce_message,'data'=>$responce_data);
+                $data_pkt = array('data'=>$number_list);
             }else{
                 $responce_message = array('Code' => '400', 'message' => 'Packet Not Fetched!');
+                $data_pkt = array("");
                 $responce = array('message'=>$responce_message);
 
             }
 
-            $responce = array('message'=>$responce_message,'data'=>$responce_data);
+            $responce = array('message'=>$responce_message,'data'=>$data_pkt);
             $returnVal = json_encode($responce);
-            echo '<pre>';
-            print_r($responce);
-            exit();
+//            echo '<pre>';
+//            print_r($responce);
+//            exit();
             return $returnVal;
         }
 
