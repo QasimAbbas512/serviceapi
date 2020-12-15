@@ -15,6 +15,7 @@ use Yii;
  * @property int $Picked
  * @property int $Completed
  * @property int $Tried
+ * @property string $UUID
  * @property string|null $PickedTime
  * @property string|null $CompletedTime
  */
@@ -43,7 +44,7 @@ class NodeRequestedDate extends \yii\db\ActiveRecord
     {
         return [
             [['DataPacket', 'RequestDestination', 'ReceivedOn'], 'required'],
-            [['DataPacket'], 'string'],
+            [['DataPacket','UUID'], 'string'],
             [['ReceivedOn', 'PickedTime', 'CompletedTime'], 'safe'],
             [['Status', 'Picked', 'Completed', 'Tried'], 'integer'],
             [['RequestDestination'], 'string', 'max' => 30],
