@@ -70,60 +70,41 @@ class LoginController extends Controller
     }
 
 
-   public function actionVerify()
-   {
-       $api_data_streem = file_get_contents("php://input");
+    public function actionVerify()
+    {
+        $api_data_streem = file_get_contents("php://input");
+        $data = json_decode($api_data_streem);
+        if(!empty($data)) {
+            foreach ($data as $v) {
+                $user = $v->username;
+                $pass = $v->pass;
+                $emei_no = $v->EMEI;
+            }
 
-//          $api_data_streem = '[{  "username":"laiba@aaa.com",
-//                                 "pass":"laiba123",
-//                                 "EMEI":"E34534dfgd"}]';
-
-       $data = json_decode($api_data_streem);
-       if(!empty($data)) {
-           foreach ($data as $v) {
-
-               $user = $v->username;
-               $pass = $v->pass;
-               $emei_no = $v->EMEI;
-           }
-
-           $user_record = User::find()->where(['UserName' => $user])->andWhere(['PasswordKey' => $pass])->andWhere(AppConstants::get_active_record_only)->one();
-           //$user_record = Yii::$app->db->createCommand("select * from user where UserName = '".$user."' and PasswordKey = '".$pass."'")->queryAll();
-           //echo "select * from user where UserName = '".$user."' and PasswordKey = '".$pass."'";exit();
-//            echo '<pre>';
-//            print_r($user_record);
-//            exit();
-           if (!empty($user_record)) {
-               $emp_name = 'ABC';//CommonFunctions::printEmployeeName($user_record->EmpID,$user_record->BranchID);
-               $responce_message = array('Code' => '200', 'message' => 'Login Sucessful');
-               $responce_data = array('UserID'=>$user_record->id,'BranchID'=>$user_record->BranchID,'EmployeeID'=>$user_record->EmpID,'EmpName'=>$emp_name);
-               $responce = array('message'=>$responce_message,'date'=>$responce_data);
-               $emei_valid_aray = '';
-               if(!empty($emei_no)){
-                   $user_device_record = UserMobileInfo::find()->where(['EmpID' => $user_record->EmpID])->andWhere(['BranchID' => $user_record->BranchID])->andWhere(['DeviceMac'=>$emei_no])->andWhere(AppConstants::get_active_record_only)->one();
-                   if(!empty($user_device_record)){
-                    $resp_msg ='Y';
-                       $response_options = Yii::$app->runAction('service/response-options', ['id' => $user_device_record->UserType, 'branch_id'=>$user_device_record->BranchID]);
-                   }else{
-                       $resp_msg = 'Device is not registered. Please contact Administrator';
-                       $response_options = '';
-                   }
-                   $emei_valid_aray = array('EMEI_Validation'=>$resp_msg);
-               }
-
-               $responce = array('message'=>$responce_message,'date'=>$responce_data,'emei_validation'=>$emei_valid_aray,'ResponseOptions'=>$response_options);
-               $returnVal = json_encode($responce);
-//               echo '<pre>';
-//               print_r($responce);
-//               exit();
-               return $returnVal;
-           }
-       }else{
-           $responce = array('Code' => '403', 'message' => 'User name or password not valid');
-           $returnVal = json_encode($responce);
-           return $returnVal;
-       }
-   }
+            $user_record = User::find()->where(['UserName' => $user])->andWhere(['PasswordKey' => $pass])->andWhere(['Active'=>'Y'])->andWhere(AppConstants::get_active_record_only)->one();
+            if (!empty($user_record)) {
+                $emp_name = 'ABC';//CommonFunctions::printEmployeeName($user_record->EmpID,$user_record->BranchID);
+                $responce_message = array('Code' => '200', 'message' => 'Login Sucessful');
+                $responce_data = array('UserID'=>$user_record->id,'BranchID'=>$user_record->BranchID,'EmployeeID'=>$user_record->EmpID,'EmpName'=>$emp_name);
+                $responce = array('message'=>$responce_message,'date'=>$responce_data);
+                $emei_valid_aray = '';
+                if(!empty($emei_no)){
+                    $user_device_record = UserMobileInfo::find()->where(['EmpID' => $user_record->EmpID])->andWhere(['BranchID' => $user_record->BranchID])->andWhere(['DeviceMac'=>$emei_no])->andWhere(AppConstants::get_active_record_only)->one();
+                    if(!empty($user_device_record)){
+                        $resp_msg ='Y';
+                    }else{
+                        $resp_msg = 'Device is not registered. Please contact Administrator';
+                    }
+                    $emei_valid_aray = array('EMEI_Validation'=>$resp_msg);
+                }
+                $responce = array('message'=>$responce_message,'date'=>$responce_data,'emei_validation'=>$emei_valid_aray);
+                $returnVal = json_encode($responce);
+                return $returnVal;
+            }else {
+                $responce = array('Code' => '403', 'message' => 'User name or password not valid');
+                $returnVal = json_encode($responce);
+                return $returnVal;
+            }}}
 
     public function actionClientLogin()
     {
