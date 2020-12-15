@@ -133,7 +133,7 @@ class ServiceController extends Controller
 
        $responce_action = 'call_response';
 
-       $response = CommonFunctions::SaveNodes($responce_action,$posting_data);
+       $response = CommonFunctions::SaveNodes($responce_action,$posting_data,$uuid);
        if($response == 1){
            $message = array('Code' => '200', 'message' => 'Sucessfully Saved');
        }else{

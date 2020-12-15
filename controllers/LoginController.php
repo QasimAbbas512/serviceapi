@@ -101,7 +101,7 @@ class LoginController extends Controller
                         $responce = array('message' => $responce_message,'data'=>$responce_data,'responce_option'=>$response_options);
                     } else {
                         $resp_msg = 'Device is not registered. Please contact Administrator';
-                        $responce_message = array('Code' => '403', 'message' => 'Login Successful but device not registered');
+                        $responce_message = array('Code' => '403', 'message' => 'Login successful but device not registered');
                         $responce = array('message' => $responce_message);
                     }
                     $emei_valid_aray = array('EMEI_Validation' => $resp_msg);
@@ -138,15 +138,14 @@ class LoginController extends Controller
     {
         //$api_data_streem = file_get_contents("php://input");
 
-        $api_data_streem = '[{  "id":"1163"
-                                 }]';
+        $api_data_streem = '[{  "EmployeeID":"183","BranchID":"2"}]';
 
         $data = json_decode($api_data_streem);
 
         if (!empty($data)) {
             foreach ($data as $v) {
 
-                $employee_id = $v->id;
+                $employee_id = $v->EmployeeID;
             }
 
             $employee_list = Yii::$app->contact_db->createCommand("SELECT jp.PacketID,jp.ContactID,jp.ContactNumber,jp.ContactNotes
