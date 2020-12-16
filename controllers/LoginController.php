@@ -96,8 +96,9 @@ class LoginController extends Controller
                     $user_device_record = UserMobileInfo::find()->where(['EmpID' => $user_record->EmpID])->andWhere(['BranchID' => $user_record->BranchID])->andWhere(['DeviceMac' => $emei_no])->andWhere(AppConstants::get_active_record_only)->one();
                     if (!empty($user_device_record)) {
                         $resp_msg = 'Y';
+                        $user_type = CommonFunctions::printListValue($user_device_record->UserType);
                         $response_options = Yii::$app->runAction('service/response-options', ['id' => $user_device_record->UserType, 'branch_id'=>$user_device_record->BranchID]);
-                        $responce = array('message' => $responce_message,'data'=>$responce_data,'responce_option'=>$response_options);
+                        $responce = array('message' => $responce_message,'UserType'=>$user_type,'data'=>$responce_data,'responce_option'=>$response_options);
                     } else {
                         $resp_msg = 'Device is not registered. Please contact Administrator';
                         $responce_message = array('Code' => '403', 'message' => 'Login successful but device not registered');
@@ -147,16 +148,21 @@ class LoginController extends Controller
                 $employee_id = $v->EmployeeID;
             }
 
-            $employee_list = Yii::$app->contact_db->createCommand("SELECT jp.PacketID,jp.ContactID,jp.ContactNumber,jp.ContactNotes
-                                                                    FROM job_packet_dtl jp, employee_job_packet_dtl ejp
-                                                                    WHERE ejp.PacketID = jp.PacketID and ejp.EmployeeID = '" . $employee_id . "' and ejp.BranchID = jp.BranchID and ejp.Status = 0 ")->queryAll();
+            $employee_list = Yii::$app->contact_db->createCommand("SELECT jp.PacketID,jp.ContactID,cl.ContactName, jp.ContactNumber,jp.ContactNotes
+                                                                    FROM job_packet_dtl jp, employee_job_packet_dtl ejp, contact_number_list cl
+                                                                    WHERE ejp.PacketID = jp.PacketID and jp.ContactID = cl.ID and ejp.EmployeeID = '" . $employee_id . "' and ejp.BranchID = jp.BranchID and ejp.Status = 0 ")->queryAll();
 
             if (!empty($employee_list)) {
                 $employee_list = CommonFunctions::arrayToObject($employee_list);
                 $x = 0;
                 foreach ($employee_list as $v) {
                     $x++;
-                    $number_list[] = array('ContactID'=>$v->ContactID,'ContactNumber' => $v->ContactNumber, 'ContactName'=>'Name-'.$x,'ContactNotes' => $v->ContactNotes);
+                    if(!empty($v->ContactName)){
+                        $conatct_name = $v->ContactName;
+                    }else{
+                        $conatct_name = 'No Name';
+                    }
+                    $number_list[] = array('ContactID'=>$v->ContactID,'ContactNumber' => $v->ContactNumber, 'ContactName'=>$conatct_name,'ContactNotes' => $v->ContactNotes);
                 }
 
                 $responce_message = array('Code' => '200', 'message' => 'Packet Fetched!');
