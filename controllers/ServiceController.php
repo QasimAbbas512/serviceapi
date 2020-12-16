@@ -40,7 +40,7 @@ class ServiceController extends Controller
      */
     public function beforeAction($action)
     {
-        if ($action->id == 'call' || $action->id == 'postman') {
+        if ($action->id == 'response-options' || $action->id == 'post-dialer-response') {
             $this->enableCsrfValidation = false;
         }
 
@@ -112,17 +112,17 @@ class ServiceController extends Controller
 
    public function actionPostDialerResponse(){
 
-       //$posting_data = file_get_contents("php://input");
-       $posting_data = '[{"UUID":"WSD3:9l:440:45-1235688965","MacAddress":"WSD3:9l:440:45",
-         "UserID":"1",
-         "JobID":"1",
-         "CompanyID":"1",
-         "ContactID":"5",
-         "ResponseValues":"3",
-         "ProfileInfo":"Address location area etc",
-         "VoiceCall":"CallFileName.aac",
-         "OtherNotes":"text notes",
-         "AudioNotes":{"0":"VoiceNote1.aac","1":"VoiceNote2.aac","2":"VoiceNote3.aac"}}]';
+       $posting_data = file_get_contents("php://input");
+//       $posting_data = '[{"UUID":"WSD3:9l:440:45-1235688965","MacAddress":"WSD3:9l:440:45",
+//         "UserID":"1",
+//         "JobID":"1",
+//         "CompanyID":"1",
+//         "ContactID":"5",
+//         "ResponseValues":"3",
+//         "ProfileInfo":"Address location area etc",
+//         "VoiceCall":"CallFileName.aac",
+//         "OtherNotes":"text notes",
+//         "AudioNotes":{"0":"VoiceNote1.aac","1":"VoiceNote2.aac","2":"VoiceNote3.aac"}}]';
 
         $data = json_decode($posting_data);
 
@@ -130,14 +130,15 @@ class ServiceController extends Controller
             $uuid = $v->UUID;
         }
 
-
        $responce_action = 'call_response';
 
        $response = CommonFunctions::SaveNodes($responce_action,$posting_data,$uuid);
        if($response == 1){
-           $message = array('Code' => '200', 'message' => 'Sucessfully Saved');
+           $message = array('Code' => '200', 'message' => 'Sucessfully Saved.');
+       }else if($response == 2){
+           $message = array('Code' => '403', 'message' => 'Request Against UUID Already Sent.');
        }else{
-           $message = array('Code' => '403', 'message' => 'Not Saved');
+           $message = array('Code' => '403', 'message' => 'Not Saved.');
        }
 
        $response_array = array('Message'=>$message);
