@@ -74,10 +74,10 @@ class LoginController extends Controller
 
     public function actionVerify()
     {
-        //$api_data_streem = file_get_contents("php://input");
-        $api_data_streem = '[{  "username":"laiba@aaa.com",
-                                 "pass":"laiba123",
-                                 "EMEI":"E34534dfgd"}]';
+        $api_data_streem = file_get_contents("php://input");
+//        $api_data_streem = '[{  "username":"laiba@aaa.com",
+//                                 "pass":"laiba123",
+//                                 "EMEI":"E34534dfgd"}]';
         $data = json_decode($api_data_streem);
         if (!empty($data)) {
             foreach ($data as $v) {
@@ -136,9 +136,9 @@ class LoginController extends Controller
 
     public function actionNumberList()
     {
-        //$api_data_streem = file_get_contents("php://input");
+        $api_data_streem = file_get_contents("php://input");
 
-        $api_data_streem = '[{  "EmployeeID":"183","BranchID":"2"}]';
+        //$api_data_streem = '[{  "EmployeeID":"183","BranchID":"2"}]';
 
         $data = json_decode($api_data_streem);
 
@@ -181,11 +181,11 @@ class LoginController extends Controller
 
     public function actionContactDetails()
     {
-        //$api_data_streem = file_get_contents("php://input");
+        $api_data_streem = file_get_contents("php://input");
 
-        $api_data_streem = '[{  "contact_id":"5",
-                                 "BranchID":"2",
-                                 "user_id":"116"}]';
+//        $api_data_streem = '[{  "contact_id":"5",
+//                                 "BranchID":"2",
+//                                 "user_id":"116"}]';
 
         $data = json_decode($api_data_streem);
 
