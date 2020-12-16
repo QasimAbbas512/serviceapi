@@ -62,16 +62,16 @@ class PacketCronController extends Controller
     public function actionCall()
     {
 
-        $call_action_data = '[{"MacAddress":"WSD3:9l:440:45",
-         "UserID":"1",
-         "JobID":"1",
-         "CompanyID":"1",
-         "ContactID":"5",
-         "ResponseValues":"3",
-         "ProfileInfo":"Address location area etc",
-         "VoiceCall":"CallFileName.aac",
-         "OtherNotes":"text notes",
-         "AudioNotes":{"0":"VoiceNote1.aac","1":"VoiceNote2.aac","2":"VoiceNote3.aac"}}]';
+//        $call_action_data = '[{"MacAddress":"WSD3:9l:440:45",
+//         "UserID":"1",
+//         "JobID":"1",
+//         "CompanyID":"1",
+//         "ContactID":"5",
+//         "ResponseValues":"3",
+//         "ProfileInfo":"Address location area etc",
+//         "VoiceCall":"CallFileName.aac",
+//         "OtherNotes":"text notes",
+//         "AudioNotes":{"0":"VoiceNote1.aac","1":"VoiceNote2.aac","2":"VoiceNote3.aac"}}]';
 
 
         $GetNodeRequestLimit = AppConstants::getNodeRequestLimit;
