@@ -47,7 +47,7 @@ class LoginController extends Controller
 
     public function beforeAction($action)
     {
-        if ($action->id == 'call' || $action->id == 'verify') {
+        if ($action->id == 'call' || $action->id == 'verify' || $action->id == 'number-list' || $action->id == 'contact-details') {
             $this->enableCsrfValidation = false;
         }
 
@@ -70,7 +70,6 @@ class LoginController extends Controller
         $returnVal = json_encode($employee);
         return $returnVal;
     }
-
 
     public function actionVerify()
     {
