@@ -78,13 +78,16 @@ class LoginController extends Controller
 //                                 "pass":"laiba123",
 //                                 "EMEI":"E34534dfgd"}]';
         $data = json_decode($api_data_streem);
-        if (!empty($data)) {
-            foreach ($data as $v) {
-                $user = $v->username;
-                $pass = $v->pass;
-                $emei_no = $v->EMEI;
-            }
 
+        if (!empty($data)) {
+//            foreach ($data as $v) {
+//                $user = $v->username;
+//                $pass = $v->pass;
+//                $emei_no = $v->EMEI;
+//            }
+            $user = $data->username;
+            $pass = $data->pass;
+            $emei_no = $data->EMEI;
             $user_record = User::find()->where(['UserName' => $user])->andWhere(['PasswordKey' => $pass])->andWhere(['Active' => 'Y'])->andWhere(AppConstants::get_active_record_only)->one();
             if (!empty($user_record)) {
                 $emp_name = CommonFunctions::printEmployeeName($user_record->EmpID,$user_record->BranchID);
