@@ -124,6 +124,10 @@ class LoginController extends Controller
 
                         $responce_data = array('UserType'=>$user_type,'UserID' => $user_record->id, 'BranchID' => $user_record->BranchID, 'EmployeeID' => $user_record->EmpID, 'EmpName' => $emp_name,'Headings'=>$heading,'InputTypes'=>$input_type,'Values'=>$val_arr);
                         $responce = array('message' => $responce_message,'data'=>$responce_data);
+                        if(empty($resp_vals) || empty($heading)){
+                            $responce_message = array('Code' => '403', 'message' => 'Login verified But Data Options Not Available');
+                            $responce = array('message' => $responce_message,'data'=>$responce_data);
+                        }
                         //$responce = array('message' => $responce_message,'data'=>$responce_data,'responce_option'=>$response_options);
                     } else {
                         $resp_msg = 'Device is not registered. Please contact Administrator';
