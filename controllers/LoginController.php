@@ -20,6 +20,8 @@ use app\models\User;
 use app\models\UserMobileInfo;
 use app\models\ContactNumberList;
 use app\models\JobCallResponses;
+use app\models\AppResponse;
+use app\models\AppResponseDtl;
 use app\models\EmployeesSearch;
 use CommonFunctions;
 use AppConstants;
@@ -100,8 +102,29 @@ class LoginController extends Controller
                     if (!empty($user_device_record)) {
                         $resp_msg = 'Y';
                         $user_type = CommonFunctions::printListValue($user_device_record->UserType);
-                        $response_options = Yii::$app->runAction('service/response-options', ['id' => $user_device_record->UserType, 'branch_id'=>$user_device_record->BranchID]);
-                        $responce = array('message' => $responce_message,'UserType'=>$user_type,'data'=>$responce_data,'responce_option'=>$response_options);
+
+                        $user_type_rec = AppResponse::find()->where(['AppUserType' => $user_device_record->UserType])->andWhere(['BranchID'=>$user_device_record->BranchID])->andWhere(AppConstants::get_active_record_only)->all();
+                        if(!empty($user_type_rec)){
+                            foreach($user_type_rec as $v) {
+                                $user_type_detail = AppResponseDtl::find()->where(['ResponseHeadID' => $v->ID])->andWhere(['BranchID' => $user_device_record->BranchID])->andWhere(AppConstants::get_active_record_only)->all();
+
+                                if (!empty($user_type_detail)) {
+                                    unset($val_arr);
+                                    foreach ($user_type_detail as $val) {
+                                        $val_arr[] = array('value' => $val->ID, 'valueText' => $val->OptionText);
+                                    }
+                                }
+                                $master_array[] = array('OptionValue' => $val_arr);
+                                $resp_vals = $master_array;
+                            }
+                            $heading = $v->ResponceHeading;
+                            $input_type = $v->InputType;
+                            $resp_vals = $val_arr;
+                        }
+
+                        $responce_data = array('UserType'=>$user_type,'UserID' => $user_record->id, 'BranchID' => $user_record->BranchID, 'EmployeeID' => $user_record->EmpID, 'EmpName' => $emp_name,'Headings'=>$heading,'InputTypes'=>$input_type,'Values'=>$val_arr);
+                        $responce = array('message' => $responce_message,'data'=>$responce_data);
+                        //$responce = array('message' => $responce_message,'data'=>$responce_data,'responce_option'=>$response_options);
                     } else {
                         $resp_msg = 'Device is not registered. Please contact Administrator';
                         $responce_message = array('Code' => '403', 'message' => 'Login successful but device not registered');
@@ -111,6 +134,7 @@ class LoginController extends Controller
                 }
 
                 $returnVal = json_encode($responce);
+
 
             } else {
                 $responce_message = array('Code' => '403', 'message' => 'User name or password not valid');
