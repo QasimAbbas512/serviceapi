@@ -197,7 +197,8 @@ class LoginController extends Controller
                 }
 
                 $responce_message = array('Code' => '200', 'message' => 'Packet Fetched!');
-                $data_pkt = array('data' => $number_list);
+                $data_pkt = $number_list;
+                //$data_pkt = array('data' => $number_list);
             } else {
                 $responce_message = array('Code' => '403', 'message' => 'Packet Not Fetched!');
                 $data_pkt = array("");
