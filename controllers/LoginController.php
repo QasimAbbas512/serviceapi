@@ -178,6 +178,8 @@ class LoginController extends Controller
 
                 $employee_id = $v->EmployeeID;
             }
+            $employee_id = $data->EmployeeID;
+            $branch_id = $data->BranchID;
 
             $employee_list = Yii::$app->contact_db->createCommand("SELECT jp.PacketID,jp.ContactID,cl.ContactName, jp.ContactNumber,jp.ContactNotes
                                                                     FROM job_packet_dtl jp, employee_job_packet_dtl ejp, contact_number_list cl
@@ -230,12 +232,14 @@ class LoginController extends Controller
 //            echo '<pre>';
 //            print_r($data);
 //            exit();
-            foreach ($data as $v) {
-                $contact_id = $v->contact_id;
-                $BranchID = $v->BranchID;
-                $user_id = $v->user_id;
-            }
-
+//            foreach ($data as $v) {
+//                $contact_id = $v->contact_id;
+//                $BranchID = $v->BranchID;
+//                $user_id = $v->user_id;
+//            }
+            $contact_id = $data->contact_id;
+            $BranchID = $data->BranchID;
+            $user_id = $data->user_id;
 
             $conatc_info = ContactNumberList::find()->where(['ID'=>$contact_id])->one();
             if(!empty($conatc_info)){
