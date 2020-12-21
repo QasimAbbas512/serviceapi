@@ -2502,11 +2502,15 @@ class MediaPostRankingController extends \yii\web\Controller
                         }else{
                                 if(!empty($reactions_like)){
                                     foreach($reactions_like as $sd){
+//                                        echo '<pre>';
+//                                        print_r($sd);
+                                        //exit();
                                         foreach($sd as $x) {
                                             $post_value_id = explode('_', $v->id);
                                             $post_id = $post_value_id[1];
                                             if(empty($x->name)){
                                                 $by_name = 'No Name';
+                                                continue;
                                             }else{
                                                 $by_name = $x->name;
                                             }
