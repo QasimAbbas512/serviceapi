@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\MediaPageRanking;
+use app\models\MediaPostLikedby;
 use app\models\NodeRequestedDate;
 use Yii;
 use CommonFunctions;
@@ -12,8 +13,8 @@ use app\models\MediaLinks;
 use app\models\PagesCredentials;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
+use yii\filters\VerbFilter;
 class MediaPostRankingController extends \yii\web\Controller
 {
     public function actionIndex()
@@ -28,1356 +29,103 @@ class MediaPostRankingController extends \yii\web\Controller
     public function actionRanking()
     {
 
-        $page_row_id = 33;
-        $get_links = MediaLinks::find()->where('ID =' . $page_row_id)->all();
+        $get_links = MediaLinks::find()->where('MediaID =1 and Active = "Y" and BranchID = 2')->all();// MediaID =1 is facebook
         if (!empty($get_links)) {
             $likes = 0;
-            foreach ($get_links as $vals) {
-                $get_tokens = PagesCredentials::find()->where(['PageID' => $vals->ID])->one();
+            foreach($get_links as $s_vals) {
+                $page_row_id = $s_vals->ID;
 
-                if (!empty($get_tokens)) {
-                    $app_id = $get_tokens->AppID;
-                    $AppSecret = $get_tokens->AppSecret;
-                    $PageToken = $get_tokens->PageToken;
-                    $pageID = $get_tokens->PageUserID;
-                    $data_objects = CommonFunctions::fbpostlikes($app_id, $AppSecret, $PageToken, '', $pageID);
-                    $body_array = json_decode($data_objects);
-                    $body_data = $body_array->data;
+                    $get_tokens = PagesCredentials::find()->where(['PageID' => $page_row_id])->one();
+
+                    if (!empty($get_tokens)) {
+                        $app_id = $get_tokens->AppID;
+                        $AppSecret = $get_tokens->AppSecret;
+                        $PageToken = $get_tokens->PageToken;
+                        $pageID = $get_tokens->PageUserID;
+                        $data_objects = CommonFunctions::fbpostlikes($app_id, $AppSecret, $PageToken, '', $pageID);
+                        $body_array = json_decode($data_objects);
+                        $body_data = $body_array->data;
 
 //                    echo "<pre>";
 //                    print_r($body_data);
 //                    exit();
 
-                    $i = 0;
-                    foreach ($body_data as $k) {
-                        $i++;
-                        $post_id = '';
-                        $created_time = '';
-                        $likes = 0;
-                        $shares = 0;
-                        $total_shares = 0;
-                        $total_likes = 0;
+                        $i = 0;
+                        foreach ($body_data as $k) {
+                            $i++;
+                            $post_id = '';
+                            $created_time = '';
+                            $likes = 0;
+                            $shares = 0;
+                            $total_shares = 0;
+                            $total_likes = 0;
 
-                        $created_time_val = $k->created_time;
-                        if (!empty($k->message)) {
-                            $message = $k->message;
-                        } else {
-                            $message = '--';
-                        }
-                        $id = $k->id;
-                        $reactions_array = $k->reactions;
-                        $shar_array = $k->shares;
+                            $created_time_val = $k->created_time;
+                            if (!empty($k->message)) {
+                                $message = $k->message;
+                            } else {
+                                $message = '--';
+                            }
+                            $id = $k->id;
+                            $reactions_array = $k->reactions;
+                            $shar_array = $k->shares;
 
 //                        echo '<pre>';
 //                        print_r($shar_array);
 //                        exit();
 
-                        foreach ($reactions_array as $x => $reac_vals) {
-                            if (!empty($reac_vals->total_count)) {
-                                $total_likes = $reac_vals->total_count;
+                            foreach ($reactions_array as $x => $reac_vals) {
+                                if (!empty($reac_vals->total_count)) {
+                                    $total_likes = $reac_vals->total_count;
+                                }
                             }
-                        }
 
 //                        foreach ($shar_array as $p => $share_vals) {
 //                            $total_shares = $share_vals;
 //                        }
-                        if (!empty($shar_array->count)) {
-                            $total_shares = $shar_array->count;
-                        }
-
-                        $post_value_id = explode('_', $id);
-                        $post_id = $post_value_id[1];
-                        $created_time = date('Y-m-d H:i:s', strtotime($created_time_val));
-                        $date = date('Y-m-d');
-                        $likes = $total_likes;
-                        $shares = $total_shares;
-
-                        $mdl = new MediaPostRanking();
-                        $mdl->CreatedOn = $created_time;
-                        $mdl->PostID = $post_id;
-                        $mdl->TotalShare = $shares;
-//                        $mdl->PostMessage = $message;
-                        $mdl->CountDate = $date;
-                        $mdl->MediaID = 1;
-                        $mdl->MediaPageID = $page_row_id;
-                        $mdl->TotalLikes = $likes;
-                        $mdl->Active = 'Y';
-                        $mdl->EnteredOn = date('Y-m-d H:i:s');
-                        $mdl->EnteredBy = 2;
-                        $mdl->BranchID = 2;
-                        $mdl->IsDeleted = 'N';
-
-                        $validation = MediaPostRanking::find()->where(['PostID' => $post_id])->andWhere(['MediaPageID' => $page_row_id])->andWhere(['CountDate' => $date])->one();
-                        if (!empty($validation)) {
-                            continue;
-                        }
-                        if ($mdl->save()) {
-                        } else {
-                            print_r($mdl->getErrors());
-                            exit();
-                        }
-
-                    }
-                }
-            }
-
-        }
-        echo "-----1-----";
-
-        $page_row_id = 32;
-        $get_links = MediaLinks::find()->where('ID =' . $page_row_id)->all();
-        if (!empty($get_links)) {
-            $likes = 0;
-            foreach ($get_links as $vals) {
-                $get_tokens = PagesCredentials::find()->where(['PageID' => $vals->ID])->one();
-
-                if (!empty($get_tokens)) {
-                    $app_id = $get_tokens->AppID;
-                    $AppSecret = $get_tokens->AppSecret;
-                    $PageToken = $get_tokens->PageToken;
-                    $pageID = $get_tokens->PageUserID;
-                    $data_objects = CommonFunctions::fbpostlikes($app_id, $AppSecret, $PageToken, '', $pageID);
-                    $body_array = json_decode($data_objects);
-                    $body_data = $body_array->data;
-
-//                    echo "<pre>";
-//                    print_r($body_data);
-//                    exit();
-
-                    $i = 0;
-                    foreach ($body_data as $k) {
-                        $i++;
-                        $post_id = '';
-                        $created_time = '';
-                        $likes = 0;
-                        $shares = 0;
-                        $total_shares = 0;
-                        $total_likes = 0;
-
-                        $created_time_val = $k->created_time;
-                        if (!empty($k->message)) {
-                            $message = $k->message;
-                        } else {
-                            $message = '--';
-                        }
-                        $id = $k->id;
-                        $reactions_array = $k->reactions;
-                        $shar_array = $k->shares;
-
-//                        echo '<pre>';
-//                        print_r($shar_array);
-//                        exit();
-
-                        foreach ($reactions_array as $x => $reac_vals) {
-                            if (!empty($reac_vals->total_count)) {
-                                $total_likes = $reac_vals->total_count;
+                            if (!empty($shar_array->count)) {
+                                $total_shares = $shar_array->count;
                             }
-                        }
 
-//                        foreach ($shar_array as $p => $share_vals) {
-//                            $total_shares = $share_vals;
-//                        }
-                        if (!empty($shar_array->count)) {
-                            $total_shares = $shar_array->count;
-                        }
+                            $post_value_id = explode('_', $id);
+                            $post_id = $post_value_id[1];
+                            $created_time = date('Y-m-d H:i:s', strtotime($created_time_val));
+                            $date = date('Y-m-d');
+                            $likes = $total_likes;
+                            $shares = $total_shares;
 
-                        $post_value_id = explode('_', $id);
-                        $post_id = $post_value_id[1];
-                        $created_time = date('Y-m-d H:i:s', strtotime($created_time_val));
-                        $date = date('Y-m-d');
-                        $likes = $total_likes;
-                        $shares = $total_shares;
-
-                        $mdl = new MediaPostRanking();
-                        $mdl->CreatedOn = $created_time;
-                        $mdl->PostID = $post_id;
-                        $mdl->TotalShare = $shares;
+                            $mdl = new MediaPostRanking();
+                            $mdl->CreatedOn = $created_time;
+                            $mdl->PostID = $post_id;
+                            $mdl->TotalShare = $shares;
 //                        $mdl->PostMessage = $message;
-                        $mdl->CountDate = $date;
-                        $mdl->MediaID = 1;
-                        $mdl->MediaPageID = $page_row_id;
-                        $mdl->TotalLikes = $likes;
-                        $mdl->Active = 'Y';
-                        $mdl->EnteredOn = date('Y-m-d H:i:s');
-                        $mdl->EnteredBy = 2;
-                        $mdl->BranchID = 2;
-                        $mdl->IsDeleted = 'N';
+                            $mdl->CountDate = $date;
+                            $mdl->MediaID = 1;
+                            $mdl->MediaPageID = $page_row_id;
+                            $mdl->TotalLikes = $likes;
+                            $mdl->Active = 'Y';
+                            $mdl->EnteredOn = date('Y-m-d H:i:s');
+                            $mdl->EnteredBy = 2;
+                            $mdl->BranchID = 2;
+                            $mdl->IsDeleted = 'N';
 
-                        $validation = MediaPostRanking::find()->where(['PostID' => $post_id])->andWhere(['MediaPageID' => $page_row_id])->andWhere(['CountDate' => $date])->one();
-                        if (!empty($validation)) {
-                            continue;
-                        }
-                        if ($mdl->save()) {
-                        } else {
-                            print_r($mdl->getErrors());
-                            exit();
-                        }
-
-                    }
-                }
-            }
-
-        }
-        echo "-----2-----";
-
-        $page_row_id = 31;
-        $get_links = MediaLinks::find()->where('ID =' . $page_row_id)->all();
-        if (!empty($get_links)) {
-            $likes = 0;
-            foreach ($get_links as $vals) {
-                $get_tokens = PagesCredentials::find()->where(['PageID' => $vals->ID])->one();
-
-                if (!empty($get_tokens)) {
-                    $app_id = $get_tokens->AppID;
-                    $AppSecret = $get_tokens->AppSecret;
-                    $PageToken = $get_tokens->PageToken;
-                    $pageID = $get_tokens->PageUserID;
-                    $data_objects = CommonFunctions::fbpostlikes($app_id, $AppSecret, $PageToken, '', $pageID);
-                    $body_array = json_decode($data_objects);
-                    $body_data = $body_array->data;
-
-//                    echo "<pre>";
-//                    print_r($body_data);
-//                    exit();
-
-                    $i = 0;
-                    foreach ($body_data as $k) {
-                        $i++;
-                        $post_id = '';
-                        $created_time = '';
-                        $likes = 0;
-                        $shares = 0;
-                        $total_shares = 0;
-                        $total_likes = 0;
-
-                        $created_time_val = $k->created_time;
-                        if (!empty($k->message)) {
-                            $message = $k->message;
-                        } else {
-                            $message = '--';
-                        }
-                        $id = $k->id;
-                        $reactions_array = $k->reactions;
-                        $shar_array = $k->shares;
-
-//                        echo '<pre>';
-//                        print_r($shar_array);
-//                        exit();
-
-                        foreach ($reactions_array as $x => $reac_vals) {
-                            if (!empty($reac_vals->total_count)) {
-                                $total_likes = $reac_vals->total_count;
+                            $validation = MediaPostRanking::find()->where(['PostID' => $post_id])->andWhere(['MediaPageID' => $page_row_id])->andWhere(['CountDate' => $date])->one();
+                            if (!empty($validation)) {
+                                continue;
                             }
-                        }
-
-//                        foreach ($shar_array as $p => $share_vals) {
-//                            $total_shares = $share_vals;
-//                        }
-                        if (!empty($shar_array->count)) {
-                            $total_shares = $shar_array->count;
-                        }
-
-                        $post_value_id = explode('_', $id);
-                        $post_id = $post_value_id[1];
-                        $created_time = date('Y-m-d H:i:s', strtotime($created_time_val));
-                        $date = date('Y-m-d');
-                        $likes = $total_likes;
-                        $shares = $total_shares;
-
-                        $mdl = new MediaPostRanking();
-                        $mdl->CreatedOn = $created_time;
-                        $mdl->PostID = $post_id;
-                        $mdl->TotalShare = $shares;
-//                        $mdl->PostMessage = $message;
-                        $mdl->CountDate = $date;
-                        $mdl->MediaID = 1;
-                        $mdl->MediaPageID = $page_row_id;
-                        $mdl->TotalLikes = $likes;
-                        $mdl->Active = 'Y';
-                        $mdl->EnteredOn = date('Y-m-d H:i:s');
-                        $mdl->EnteredBy = 2;
-                        $mdl->BranchID = 2;
-                        $mdl->IsDeleted = 'N';
-
-                        $validation = MediaPostRanking::find()->where(['PostID' => $post_id])->andWhere(['MediaPageID' => $page_row_id])->andWhere(['CountDate' => $date])->one();
-                        if (!empty($validation)) {
-                            continue;
-                        }
-                        if ($mdl->save()) {
-                        } else {
-                            print_r($mdl->getErrors());
-                            exit();
-                        }
-
-                    }
-                }
-            }
-
-        }
-        echo "-----3-----";
-
-        $page_row_id = 27;
-        $get_links = MediaLinks::find()->where('ID =' . $page_row_id)->all();
-        if (!empty($get_links)) {
-            $likes = 0;
-            foreach ($get_links as $vals) {
-                $get_tokens = PagesCredentials::find()->where(['PageID' => $vals->ID])->one();
-
-                if (!empty($get_tokens)) {
-                    $app_id = $get_tokens->AppID;
-                    $AppSecret = $get_tokens->AppSecret;
-                    $PageToken = $get_tokens->PageToken;
-                    $pageID = $get_tokens->PageUserID;
-                    $data_objects = CommonFunctions::fbpostlikes($app_id, $AppSecret, $PageToken, '', $pageID);
-                    $body_array = json_decode($data_objects);
-                    $body_data = $body_array->data;
-
-//                    echo "<pre>";
-//                    print_r($body_data);
-//                    exit();
-
-                    $i = 0;
-                    foreach ($body_data as $k) {
-                        $i++;
-                        $post_id = '';
-                        $created_time = '';
-                        $likes = 0;
-                        $shares = 0;
-                        $total_shares = 0;
-                        $total_likes = 0;
-
-                        $created_time_val = $k->created_time;
-                        if (!empty($k->message)) {
-                            $message = $k->message;
-                        } else {
-                            $message = '--';
-                        }
-                        $id = $k->id;
-                        $reactions_array = $k->reactions;
-                        $shar_array = $k->shares;
-
-//                        echo '<pre>';
-//                        print_r($shar_array);
-//                        exit();
-
-                        foreach ($reactions_array as $x => $reac_vals) {
-                            if (!empty($reac_vals->total_count)) {
-                                $total_likes = $reac_vals->total_count;
+                            if ($mdl->save()) {
+                            } else {
+                                print_r($mdl->getErrors());
+                                exit();
                             }
+
                         }
-
-//                        foreach ($shar_array as $p => $share_vals) {
-//                            $total_shares = $share_vals;
-//                        }
-                        if (!empty($shar_array->count)) {
-                            $total_shares = $shar_array->count;
-                        }
-
-                        $post_value_id = explode('_', $id);
-                        $post_id = $post_value_id[1];
-                        $created_time = date('Y-m-d H:i:s', strtotime($created_time_val));
-                        $date = date('Y-m-d');
-                        $likes = $total_likes;
-                        $shares = $total_shares;
-
-                        $mdl = new MediaPostRanking();
-                        $mdl->CreatedOn = $created_time;
-                        $mdl->PostID = $post_id;
-                        $mdl->TotalShare = $shares;
-//                        $mdl->PostMessage = $message;
-                        $mdl->CountDate = $date;
-                        $mdl->MediaID = 1;
-                        $mdl->MediaPageID = $page_row_id;
-                        $mdl->TotalLikes = $likes;
-                        $mdl->Active = 'Y';
-                        $mdl->EnteredOn = date('Y-m-d H:i:s');
-                        $mdl->EnteredBy = 2;
-                        $mdl->BranchID = 2;
-                        $mdl->IsDeleted = 'N';
-
-                        $validation = MediaPostRanking::find()->where(['PostID' => $post_id])->andWhere(['MediaPageID' => $page_row_id])->andWhere(['CountDate' => $date])->one();
-                        if (!empty($validation)) {
-                            continue;
-                        }
-                        if ($mdl->save()) {
-                        } else {
-                            print_r($mdl->getErrors());
-                            exit();
-                        }
-
                     }
-                }
+
             }
-
         }
-        echo "-----4-----";
 
-        $page_row_id = 26;
-        $get_links = MediaLinks::find()->where('ID =' . $page_row_id)->all();
-        if (!empty($get_links)) {
-            $likes = 0;
-            foreach ($get_links as $vals) {
-                $get_tokens = PagesCredentials::find()->where(['PageID' => $vals->ID])->one();
 
-                if (!empty($get_tokens)) {
-                    $app_id = $get_tokens->AppID;
-                    $AppSecret = $get_tokens->AppSecret;
-                    $PageToken = $get_tokens->PageToken;
-                    $pageID = $get_tokens->PageUserID;
-                    $data_objects = CommonFunctions::fbpostlikes($app_id, $AppSecret, $PageToken, '', $pageID);
-                    $body_array = json_decode($data_objects);
-                    $body_data = $body_array->data;
-
-//                    echo "<pre>";
-//                    print_r($body_data);
-//                    exit();
-
-                    $i = 0;
-                    foreach ($body_data as $k) {
-                        $i++;
-                        $post_id = '';
-                        $created_time = '';
-                        $likes = 0;
-                        $shares = 0;
-                        $total_shares = 0;
-                        $total_likes = 0;
-
-                        $created_time_val = $k->created_time;
-                        if (!empty($k->message)) {
-                            $message = $k->message;
-                        } else {
-                            $message = '--';
-                        }
-                        $id = $k->id;
-                        $reactions_array = $k->reactions;
-                        $shar_array = $k->shares;
-
-//                        echo '<pre>';
-//                        print_r($shar_array);
-//                        exit();
-
-                        foreach ($reactions_array as $x => $reac_vals) {
-                            if (!empty($reac_vals->total_count)) {
-                                $total_likes = $reac_vals->total_count;
-                            }
-                        }
-
-//                        foreach ($shar_array as $p => $share_vals) {
-//                            $total_shares = $share_vals;
-//                        }
-                        if (!empty($shar_array->count)) {
-                            $total_shares = $shar_array->count;
-                        }
-
-                        $post_value_id = explode('_', $id);
-                        $post_id = $post_value_id[1];
-                        $created_time = date('Y-m-d H:i:s', strtotime($created_time_val));
-                        $date = date('Y-m-d');
-                        $likes = $total_likes;
-                        $shares = $total_shares;
-
-                        $mdl = new MediaPostRanking();
-                        $mdl->CreatedOn = $created_time;
-                        $mdl->PostID = $post_id;
-                        $mdl->TotalShare = $shares;
-//                        $mdl->PostMessage = $message;
-                        $mdl->CountDate = $date;
-                        $mdl->MediaID = 1;
-                        $mdl->MediaPageID = $page_row_id;
-                        $mdl->TotalLikes = $likes;
-                        $mdl->Active = 'Y';
-                        $mdl->EnteredOn = date('Y-m-d H:i:s');
-                        $mdl->EnteredBy = 2;
-                        $mdl->BranchID = 2;
-                        $mdl->IsDeleted = 'N';
-                        $validation = MediaPostRanking::find()->where(['PostID' => $post_id])->andWhere(['MediaPageID' => $page_row_id])->andWhere(['CountDate' => $date])->one();
-                        if (!empty($validation)) {
-                            continue;
-                        }
-                        if ($mdl->save()) {
-                        } else {
-                            print_r($mdl->getErrors());
-                            exit();
-                        }
-
-                    }
-                }
-            }
-
-        }
-        echo "-----5-----";
-
-        $page_row_id = 18;
-        $get_links = MediaLinks::find()->where('ID =' . $page_row_id)->all();
-        if (!empty($get_links)) {
-            $likes = 0;
-            foreach ($get_links as $vals) {
-                $get_tokens = PagesCredentials::find()->where(['PageID' => $vals->ID])->one();
-
-                if (!empty($get_tokens)) {
-                    $app_id = $get_tokens->AppID;
-                    $AppSecret = $get_tokens->AppSecret;
-                    $PageToken = $get_tokens->PageToken;
-                    $pageID = $get_tokens->PageUserID;
-                    $data_objects = CommonFunctions::fbpostlikes($app_id, $AppSecret, $PageToken, '', $pageID);
-                    $body_array = json_decode($data_objects);
-                    $body_data = $body_array->data;
-
-//                    echo "<pre>";
-//                    print_r($body_data);
-//                    exit();
-
-                    $i = 0;
-                    foreach ($body_data as $k) {
-                        $i++;
-                        $post_id = '';
-                        $created_time = '';
-                        $likes = 0;
-                        $shares = 0;
-                        $total_shares = 0;
-                        $total_likes = 0;
-
-                        $created_time_val = $k->created_time;
-                        if (!empty($k->message)) {
-                            $message = $k->message;
-                        } else {
-                            $message = '--';
-                        }
-                        $id = $k->id;
-                        $reactions_array = $k->reactions;
-                        $shar_array = $k->shares;
-
-//                        echo '<pre>';
-//                        print_r($shar_array);
-//                        exit();
-
-                        foreach ($reactions_array as $x => $reac_vals) {
-                            if (!empty($reac_vals->total_count)) {
-                                $total_likes = $reac_vals->total_count;
-                            }
-                        }
-
-//                        foreach ($shar_array as $p => $share_vals) {
-//                            $total_shares = $share_vals;
-//                        }
-                        if (!empty($shar_array->count)) {
-                            $total_shares = $shar_array->count;
-                        }
-
-                        $post_value_id = explode('_', $id);
-                        $post_id = $post_value_id[1];
-                        $created_time = date('Y-m-d H:i:s', strtotime($created_time_val));
-                        $date = date('Y-m-d');
-                        $likes = $total_likes;
-                        $shares = $total_shares;
-
-                        $mdl = new MediaPostRanking();
-                        $mdl->CreatedOn = $created_time;
-                        $mdl->PostID = $post_id;
-                        $mdl->TotalShare = $shares;
-//                        $mdl->PostMessage = $message;
-                        $mdl->CountDate = $date;
-                        $mdl->MediaID = 1;
-                        $mdl->MediaPageID = $page_row_id;
-                        $mdl->TotalLikes = $likes;
-                        $mdl->Active = 'Y';
-                        $mdl->EnteredOn = date('Y-m-d H:i:s');
-                        $mdl->EnteredBy = 2;
-                        $mdl->BranchID = 2;
-                        $mdl->IsDeleted = 'N';
-
-                        $validation = MediaPostRanking::find()->where(['PostID' => $post_id])->andWhere(['MediaPageID' => $page_row_id])->andWhere(['CountDate' => $date])->one();
-                        if (!empty($validation)) {
-                            continue;
-                        }
-                        if ($mdl->save()) {
-                        } else {
-                            print_r($mdl->getErrors());
-                            exit();
-                        }
-
-                    }
-                }
-            }
-
-        }
-        echo "-----6-----";
-
-        $page_row_id = 28;
-        $get_links = MediaLinks::find()->where('ID =' . $page_row_id)->all();
-        if (!empty($get_links)) {
-            $likes = 0;
-            foreach ($get_links as $vals) {
-                $get_tokens = PagesCredentials::find()->where(['PageID' => $vals->ID])->one();
-
-                if (!empty($get_tokens)) {
-                    $app_id = $get_tokens->AppID;
-                    $AppSecret = $get_tokens->AppSecret;
-                    $PageToken = $get_tokens->PageToken;
-                    $pageID = $get_tokens->PageUserID;
-                    $data_objects = CommonFunctions::fbpostlikes($app_id, $AppSecret, $PageToken, '', $pageID);
-                    $body_array = json_decode($data_objects);
-                    $body_data = $body_array->data;
-
-//                    echo "<pre>";
-//                    print_r($body_data);
-//                    exit();
-
-                    $i = 0;
-                    foreach ($body_data as $k) {
-                        $i++;
-                        $post_id = '';
-                        $created_time = '';
-                        $likes = 0;
-                        $shares = 0;
-                        $total_shares = 0;
-                        $total_likes = 0;
-
-                        $created_time_val = $k->created_time;
-                        if (!empty($k->message)) {
-                            $message = $k->message;
-                        } else {
-                            $message = '--';
-                        }
-                        $id = $k->id;
-                        $reactions_array = $k->reactions;
-                        $shar_array = $k->shares;
-
-//                        echo '<pre>';
-//                        print_r($shar_array);
-//                        exit();
-
-                        foreach ($reactions_array as $x => $reac_vals) {
-                            if (!empty($reac_vals->total_count)) {
-                                $total_likes = $reac_vals->total_count;
-                            }
-                        }
-
-//                        foreach ($shar_array as $p => $share_vals) {
-//                            $total_shares = $share_vals;
-//                        }
-                        if (!empty($shar_array->count)) {
-                            $total_shares = $shar_array->count;
-                        }
-
-                        $post_value_id = explode('_', $id);
-                        $post_id = $post_value_id[1];
-                        $created_time = date('Y-m-d H:i:s', strtotime($created_time_val));
-                        $date = date('Y-m-d');
-                        $likes = $total_likes;
-                        $shares = $total_shares;
-
-                        $mdl = new MediaPostRanking();
-                        $mdl->CreatedOn = $created_time;
-                        $mdl->PostID = $post_id;
-                        $mdl->TotalShare = $shares;
-//                        $mdl->PostMessage = $message;
-                        $mdl->CountDate = $date;
-                        $mdl->MediaID = 1;
-                        $mdl->MediaPageID = $page_row_id;
-                        $mdl->TotalLikes = $likes;
-                        $mdl->Active = 'Y';
-                        $mdl->EnteredOn = date('Y-m-d H:i:s');
-                        $mdl->EnteredBy = 2;
-                        $mdl->BranchID = 2;
-                        $mdl->IsDeleted = 'N';
-
-                        $validation = MediaPostRanking::find()->where(['PostID' => $post_id])->andWhere(['MediaPageID' => $page_row_id])->andWhere(['CountDate' => $date])->one();
-                        if (!empty($validation)) {
-                            continue;
-                        }
-                        if ($mdl->save()) {
-                        } else {
-                            print_r($mdl->getErrors());
-                            exit();
-                        }
-
-                    }
-                }
-            }
-
-        }
-        echo "-----7-----";
-
-        $page_row_id = 16;
-        $get_links = MediaLinks::find()->where('ID =' . $page_row_id)->all();
-        if (!empty($get_links)) {
-            $likes = 0;
-            foreach ($get_links as $vals) {
-                $get_tokens = PagesCredentials::find()->where(['PageID' => $vals->ID])->one();
-
-                if (!empty($get_tokens)) {
-                    $app_id = $get_tokens->AppID;
-                    $AppSecret = $get_tokens->AppSecret;
-                    $PageToken = $get_tokens->PageToken;
-                    $pageID = $get_tokens->PageUserID;
-                    $data_objects = CommonFunctions::fbpostlikes($app_id, $AppSecret, $PageToken, '', $pageID);
-                    $body_array = json_decode($data_objects);
-                    $body_data = $body_array->data;
-
-//                    echo "<pre>";
-//                    print_r($body_data);
-//                    exit();
-
-                    $i = 0;
-                    foreach ($body_data as $k) {
-                        $i++;
-                        $post_id = '';
-                        $created_time = '';
-                        $likes = 0;
-                        $shares = 0;
-                        $total_shares = 0;
-                        $total_likes = 0;
-
-                        $created_time_val = $k->created_time;
-                        if (!empty($k->message)) {
-                            $message = $k->message;
-                        } else {
-                            $message = '--';
-                        }
-                        $id = $k->id;
-                        $reactions_array = $k->reactions;
-                        $shar_array = $k->shares;
-
-//                        echo '<pre>';
-//                        print_r($shar_array);
-//                        exit();
-
-                        foreach ($reactions_array as $x => $reac_vals) {
-                            if (!empty($reac_vals->total_count)) {
-                                $total_likes = $reac_vals->total_count;
-                            }
-                        }
-
-//                        foreach ($shar_array as $p => $share_vals) {
-//                            $total_shares = $share_vals;
-//                        }
-                        if (!empty($shar_array->count)) {
-                            $total_shares = $shar_array->count;
-                        }
-
-                        $post_value_id = explode('_', $id);
-                        $post_id = $post_value_id[1];
-                        $created_time = date('Y-m-d H:i:s', strtotime($created_time_val));
-                        $date = date('Y-m-d');
-                        $likes = $total_likes;
-                        $shares = $total_shares;
-
-                        $mdl = new MediaPostRanking();
-                        $mdl->CreatedOn = $created_time;
-                        $mdl->PostID = $post_id;
-                        $mdl->TotalShare = $shares;
-//                        $mdl->PostMessage = $message;
-                        $mdl->CountDate = $date;
-                        $mdl->MediaID = 1;
-                        $mdl->MediaPageID = $page_row_id;
-                        $mdl->TotalLikes = $likes;
-                        $mdl->Active = 'Y';
-                        $mdl->EnteredOn = date('Y-m-d H:i:s');
-                        $mdl->EnteredBy = 2;
-                        $mdl->BranchID = 2;
-                        $mdl->IsDeleted = 'N';
-
-                        $validation = MediaPostRanking::find()->where(['PostID' => $post_id])->andWhere(['MediaPageID' => $page_row_id])->andWhere(['CountDate' => $date])->one();
-                        if (!empty($validation)) {
-                            continue;
-                        }
-                        if ($mdl->save()) {
-                        } else {
-                            print_r($mdl->getErrors());
-                            exit();
-                        }
-
-                    }
-                }
-            }
-
-        }
-        echo "-----8-----";
-
-        $page_row_id = 12;
-        $get_links = MediaLinks::find()->where('ID =' . $page_row_id)->all();
-        if (!empty($get_links)) {
-            $likes = 0;
-            foreach ($get_links as $vals) {
-                $get_tokens = PagesCredentials::find()->where(['PageID' => $vals->ID])->one();
-
-                if (!empty($get_tokens)) {
-                    $app_id = $get_tokens->AppID;
-                    $AppSecret = $get_tokens->AppSecret;
-                    $PageToken = $get_tokens->PageToken;
-                    $pageID = $get_tokens->PageUserID;
-                    $data_objects = CommonFunctions::fbpostlikes($app_id, $AppSecret, $PageToken, '', $pageID);
-                    $body_array = json_decode($data_objects);
-                    $body_data = $body_array->data;
-
-//                    echo "<pre>";
-//                    print_r($body_data);
-//                    exit();
-
-                    $i = 0;
-                    foreach ($body_data as $k) {
-                        $i++;
-                        $post_id = '';
-                        $created_time = '';
-                        $likes = 0;
-                        $shares = 0;
-                        $total_shares = 0;
-                        $total_likes = 0;
-
-                        $created_time_val = $k->created_time;
-                        if (!empty($k->message)) {
-                            $message = $k->message;
-                        } else {
-                            $message = '--';
-                        }
-                        $id = $k->id;
-                        $reactions_array = $k->reactions;
-                        $shar_array = $k->shares;
-
-//                        echo '<pre>';
-//                        print_r($shar_array);
-//                        exit();
-
-                        foreach ($reactions_array as $x => $reac_vals) {
-                            if (!empty($reac_vals->total_count)) {
-                                $total_likes = $reac_vals->total_count;
-                            }
-                        }
-
-//                        foreach ($shar_array as $p => $share_vals) {
-//                            $total_shares = $share_vals;
-//                        }
-                        if (!empty($shar_array->count)) {
-                            $total_shares = $shar_array->count;
-                        }
-
-                        $post_value_id = explode('_', $id);
-                        $post_id = $post_value_id[1];
-                        $created_time = date('Y-m-d H:i:s', strtotime($created_time_val));
-                        $date = date('Y-m-d');
-                        $likes = $total_likes;
-                        $shares = $total_shares;
-
-                        $mdl = new MediaPostRanking();
-                        $mdl->CreatedOn = $created_time;
-                        $mdl->PostID = $post_id;
-                        $mdl->TotalShare = $shares;
-//                        $mdl->PostMessage = $message;
-                        $mdl->CountDate = $date;
-                        $mdl->MediaID = 1;
-                        $mdl->MediaPageID = $page_row_id;
-                        $mdl->TotalLikes = $likes;
-                        $mdl->Active = 'Y';
-                        $mdl->EnteredOn = date('Y-m-d H:i:s');
-                        $mdl->EnteredBy = 2;
-                        $mdl->BranchID = 2;
-                        $mdl->IsDeleted = 'N';
-
-                        $validation = MediaPostRanking::find()->where(['PostID' => $post_id])->andWhere(['MediaPageID' => $page_row_id])->andWhere(['CountDate' => $date])->one();
-                        if (!empty($validation)) {
-                            continue;
-                        }
-                        if ($mdl->save()) {
-                        } else {
-                            print_r($mdl->getErrors());
-                            exit();
-                        }
-
-                    }
-                }
-            }
-
-        }
-        echo "-----9-----";
-
-        $page_row_id = 10;
-        $get_links = MediaLinks::find()->where('ID =' . $page_row_id)->all();
-        if (!empty($get_links)) {
-            $likes = 0;
-            foreach ($get_links as $vals) {
-                $get_tokens = PagesCredentials::find()->where(['PageID' => $vals->ID])->one();
-
-                if (!empty($get_tokens)) {
-                    $app_id = $get_tokens->AppID;
-                    $AppSecret = $get_tokens->AppSecret;
-                    $PageToken = $get_tokens->PageToken;
-                    $pageID = $get_tokens->PageUserID;
-                    $data_objects = CommonFunctions::fbpostlikes($app_id, $AppSecret, $PageToken, '', $pageID);
-                    $body_array = json_decode($data_objects);
-                    $body_data = $body_array->data;
-
-//                    echo "<pre>";
-//                    print_r($body_data);
-//                    exit();
-
-                    $i = 0;
-                    foreach ($body_data as $k) {
-                        $i++;
-                        $post_id = '';
-                        $created_time = '';
-                        $likes = 0;
-                        $shares = 0;
-                        $total_shares = 0;
-                        $total_likes = 0;
-
-                        $created_time_val = $k->created_time;
-                        if (!empty($k->message)) {
-                            $message = $k->message;
-                        } else {
-                            $message = '--';
-                        }
-                        $id = $k->id;
-                        $reactions_array = $k->reactions;
-                        $shar_array = $k->shares;
-
-//                        echo '<pre>';
-//                        print_r($shar_array);
-//                        exit();
-
-                        foreach ($reactions_array as $x => $reac_vals) {
-                            if (!empty($reac_vals->total_count)) {
-                                $total_likes = $reac_vals->total_count;
-                            }
-                        }
-
-//                        foreach ($shar_array as $p => $share_vals) {
-//                            $total_shares = $share_vals;
-//                        }
-                        if (!empty($shar_array->count)) {
-                            $total_shares = $shar_array->count;
-                        }
-
-                        $post_value_id = explode('_', $id);
-                        $post_id = $post_value_id[1];
-                        $created_time = date('Y-m-d H:i:s', strtotime($created_time_val));
-                        $date = date('Y-m-d');
-                        $likes = $total_likes;
-                        $shares = $total_shares;
-
-                        $mdl = new MediaPostRanking();
-                        $mdl->CreatedOn = $created_time;
-                        $mdl->PostID = $post_id;
-                        $mdl->TotalShare = $shares;
-//                        $mdl->PostMessage = $message;
-                        $mdl->CountDate = $date;
-                        $mdl->MediaID = 1;
-                        $mdl->MediaPageID = $page_row_id;
-                        $mdl->TotalLikes = $likes;
-                        $mdl->Active = 'Y';
-                        $mdl->EnteredOn = date('Y-m-d H:i:s');
-                        $mdl->EnteredBy = 2;
-                        $mdl->BranchID = 2;
-                        $mdl->IsDeleted = 'N';
-
-                        $validation = MediaPostRanking::find()->where(['PostID' => $post_id])->andWhere(['MediaPageID' => $page_row_id])->andWhere(['CountDate' => $date])->one();
-                        if (!empty($validation)) {
-                            continue;
-                        }
-                        if ($mdl->save()) {
-                        } else {
-                            print_r($mdl->getErrors());
-                            exit();
-                        }
-
-                    }
-                }
-            }
-
-        }
-        echo "-----10-----";
-
-        $page_row_id = 7;
-        $get_links = MediaLinks::find()->where('ID =' . $page_row_id)->all();
-        if (!empty($get_links)) {
-            $likes = 0;
-            foreach ($get_links as $vals) {
-                $get_tokens = PagesCredentials::find()->where(['PageID' => $vals->ID])->one();
-
-                if (!empty($get_tokens)) {
-                    $app_id = $get_tokens->AppID;
-                    $AppSecret = $get_tokens->AppSecret;
-                    $PageToken = $get_tokens->PageToken;
-                    $pageID = $get_tokens->PageUserID;
-                    $data_objects = CommonFunctions::fbpostlikes($app_id, $AppSecret, $PageToken, '', $pageID);
-                    $body_array = json_decode($data_objects);
-                    $body_data = $body_array->data;
-
-//                    echo "<pre>";
-//                    print_r($body_data);
-//                    exit();
-
-                    $i = 0;
-                    foreach ($body_data as $k) {
-                        $i++;
-                        $post_id = '';
-                        $created_time = '';
-                        $likes = 0;
-                        $shares = 0;
-                        $total_shares = 0;
-                        $total_likes = 0;
-
-                        $created_time_val = $k->created_time;
-                        if (!empty($k->message)) {
-                            $message = $k->message;
-                        } else {
-                            $message = '--';
-                        }
-                        $id = $k->id;
-                        $reactions_array = $k->reactions;
-                        $shar_array = $k->shares;
-
-//                        echo '<pre>';
-//                        print_r($shar_array);
-//                        exit();
-
-                        foreach ($reactions_array as $x => $reac_vals) {
-                            if (!empty($reac_vals->total_count)) {
-                                $total_likes = $reac_vals->total_count;
-                            }
-                        }
-
-//                        foreach ($shar_array as $p => $share_vals) {
-//                            $total_shares = $share_vals;
-//                        }
-                        if (!empty($shar_array->count)) {
-                            $total_shares = $shar_array->count;
-                        }
-
-                        $post_value_id = explode('_', $id);
-                        $post_id = $post_value_id[1];
-                        $created_time = date('Y-m-d H:i:s', strtotime($created_time_val));
-                        $date = date('Y-m-d');
-                        $likes = $total_likes;
-                        $shares = $total_shares;
-
-                        $mdl = new MediaPostRanking();
-                        $mdl->CreatedOn = $created_time;
-                        $mdl->PostID = $post_id;
-                        $mdl->TotalShare = $shares;
-//                        $mdl->PostMessage = $message;
-                        $mdl->CountDate = $date;
-                        $mdl->MediaID = 1;
-                        $mdl->MediaPageID = $page_row_id;
-                        $mdl->TotalLikes = $likes;
-                        $mdl->Active = 'Y';
-                        $mdl->EnteredOn = date('Y-m-d H:i:s');
-                        $mdl->EnteredBy = 2;
-                        $mdl->BranchID = 2;
-                        $mdl->IsDeleted = 'N';
-
-                        $validation = MediaPostRanking::find()->where(['PostID' => $post_id])->andWhere(['MediaPageID' => $page_row_id])->andWhere(['CountDate' => $date])->one();
-                        if (!empty($validation)) {
-                            continue;
-                        }
-                        if ($mdl->save()) {
-                        } else {
-                            print_r($mdl->getErrors());
-                            exit();
-                        }
-
-                    }
-                }
-            }
-
-        }
-        echo "-----11-----";
-
-        $page_row_id = 6;
-        $get_links = MediaLinks::find()->where('ID =' . $page_row_id)->all();
-        if (!empty($get_links)) {
-            $likes = 0;
-            foreach ($get_links as $vals) {
-                $get_tokens = PagesCredentials::find()->where(['PageID' => $vals->ID])->one();
-
-                if (!empty($get_tokens)) {
-                    $app_id = $get_tokens->AppID;
-                    $AppSecret = $get_tokens->AppSecret;
-                    $PageToken = $get_tokens->PageToken;
-                    $pageID = $get_tokens->PageUserID;
-                    $data_objects = CommonFunctions::fbpostlikes($app_id, $AppSecret, $PageToken, '', $pageID);
-                    $body_array = json_decode($data_objects);
-                    $body_data = $body_array->data;
-
-//                    echo "<pre>";
-//                    print_r($body_data);
-//                    exit();
-
-                    $i = 0;
-                    foreach ($body_data as $k) {
-                        $i++;
-                        $post_id = '';
-                        $created_time = '';
-                        $likes = 0;
-                        $shares = 0;
-                        $total_shares = 0;
-                        $total_likes = 0;
-
-                        $created_time_val = $k->created_time;
-                        if (!empty($k->message)) {
-                            $message = $k->message;
-                        } else {
-                            $message = '--';
-                        }
-                        $id = $k->id;
-                        $reactions_array = $k->reactions;
-                        $shar_array = $k->shares;
-
-//                        echo '<pre>';
-//                        print_r($shar_array);
-//                        exit();
-
-                        foreach ($reactions_array as $x => $reac_vals) {
-                            if (!empty($reac_vals->total_count)) {
-                                $total_likes = $reac_vals->total_count;
-                            }
-                        }
-
-//                        foreach ($shar_array as $p => $share_vals) {
-//                            $total_shares = $share_vals;
-//                        }
-                        if (!empty($shar_array->count)) {
-                            $total_shares = $shar_array->count;
-                        }
-
-                        $post_value_id = explode('_', $id);
-                        $post_id = $post_value_id[1];
-                        $created_time = date('Y-m-d H:i:s', strtotime($created_time_val));
-                        $date = date('Y-m-d');
-                        $likes = $total_likes;
-                        $shares = $total_shares;
-
-                        $mdl = new MediaPostRanking();
-                        $mdl->CreatedOn = $created_time;
-                        $mdl->PostID = $post_id;
-                        $mdl->TotalShare = $shares;
-//                        $mdl->PostMessage = $message;
-                        $mdl->CountDate = $date;
-                        $mdl->MediaID = 1;
-                        $mdl->MediaPageID = $page_row_id;
-                        $mdl->TotalLikes = $likes;
-                        $mdl->Active = 'Y';
-                        $mdl->EnteredOn = date('Y-m-d H:i:s');
-                        $mdl->EnteredBy = 2;
-                        $mdl->BranchID = 2;
-                        $mdl->IsDeleted = 'N';
-
-                        $validation = MediaPostRanking::find()->where(['PostID' => $post_id])->andWhere(['MediaPageID' => $page_row_id])->andWhere(['CountDate' => $date])->one();
-                        if (!empty($validation)) {
-                            continue;
-                        }
-                        if ($mdl->save()) {
-                        } else {
-                            print_r($mdl->getErrors());
-                            exit();
-                        }
-
-                    }
-                }
-            }
-
-        }
-        echo "-----12-----";
-
-        $page_row_id = 5;
-        $get_links = MediaLinks::find()->where('ID =' . $page_row_id)->all();
-        if (!empty($get_links)) {
-            $likes = 0;
-            foreach ($get_links as $vals) {
-                $get_tokens = PagesCredentials::find()->where(['PageID' => $vals->ID])->one();
-
-                if (!empty($get_tokens)) {
-                    $app_id = $get_tokens->AppID;
-                    $AppSecret = $get_tokens->AppSecret;
-                    $PageToken = $get_tokens->PageToken;
-                    $pageID = $get_tokens->PageUserID;
-                    $data_objects = CommonFunctions::fbpostlikes($app_id, $AppSecret, $PageToken, '', $pageID);
-                    $body_array = json_decode($data_objects);
-                    $body_data = $body_array->data;
-
-//                    echo "<pre>";
-//                    print_r($body_data);
-//                    exit();
-
-                    $i = 0;
-                    foreach ($body_data as $k) {
-                        $i++;
-                        $post_id = '';
-                        $created_time = '';
-                        $likes = 0;
-                        $shares = 0;
-                        $total_shares = 0;
-                        $total_likes = 0;
-
-                        $created_time_val = $k->created_time;
-                        if (!empty($k->message)) {
-                            $message = $k->message;
-                        } else {
-                            $message = '--';
-                        }
-                        $id = $k->id;
-                        $reactions_array = $k->reactions;
-                        $shar_array = $k->shares;
-
-//                        echo '<pre>';
-//                        print_r($shar_array);
-//                        exit();
-
-                        foreach ($reactions_array as $x => $reac_vals) {
-                            if (!empty($reac_vals->total_count)) {
-                                $total_likes = $reac_vals->total_count;
-                            }
-                        }
-
-//                        foreach ($shar_array as $p => $share_vals) {
-//                            $total_shares = $share_vals;
-//                        }
-                        if (!empty($shar_array->count)) {
-                            $total_shares = $shar_array->count;
-                        }
-
-                        $post_value_id = explode('_', $id);
-                        $post_id = $post_value_id[1];
-                        $created_time = date('Y-m-d H:i:s', strtotime($created_time_val));
-                        $date = date('Y-m-d');
-                        $likes = $total_likes;
-                        $shares = $total_shares;
-
-                        $mdl = new MediaPostRanking();
-                        $mdl->CreatedOn = $created_time;
-                        $mdl->PostID = $post_id;
-                        $mdl->TotalShare = $shares;
-//                        $mdl->PostMessage = $message;
-                        $mdl->CountDate = $date;
-                        $mdl->MediaID = 1;
-                        $mdl->MediaPageID = $page_row_id;
-                        $mdl->TotalLikes = $likes;
-                        $mdl->Active = 'Y';
-                        $mdl->EnteredOn = date('Y-m-d H:i:s');
-                        $mdl->EnteredBy = 2;
-                        $mdl->BranchID = 2;
-                        $mdl->IsDeleted = 'N';
-
-                        $validation = MediaPostRanking::find()->where(['PostID' => $post_id])->andWhere(['MediaPageID' => $page_row_id])->andWhere(['CountDate' => $date])->one();
-                        if (!empty($validation)) {
-                            continue;
-                        }
-                        if ($mdl->save()) {
-                        } else {
-                            print_r($mdl->getErrors());
-                            exit();
-                        }
-
-                    }
-                }
-            }
-
-        }
-        echo "-----13-----";
-
-        $page_row_id = 4;
-        $get_links = MediaLinks::find()->where('ID =' . $page_row_id)->all();
-        if (!empty($get_links)) {
-            $likes = 0;
-            foreach ($get_links as $vals) {
-                $get_tokens = PagesCredentials::find()->where(['PageID' => $vals->ID])->one();
-
-                if (!empty($get_tokens)) {
-                    $app_id = $get_tokens->AppID;
-                    $AppSecret = $get_tokens->AppSecret;
-                    $PageToken = $get_tokens->PageToken;
-                    $pageID = $get_tokens->PageUserID;
-                    $data_objects = CommonFunctions::fbpostlikes($app_id, $AppSecret, $PageToken, '', $pageID);
-                    $body_array = json_decode($data_objects);
-                    $body_data = $body_array->data;
-
-//                    echo "<pre>";
-//                    print_r($body_data);
-//                    exit();
-
-                    $i = 0;
-                    foreach ($body_data as $k) {
-                        $i++;
-                        $post_id = '';
-                        $created_time = '';
-                        $likes = 0;
-                        $shares = 0;
-                        $total_shares = 0;
-                        $total_likes = 0;
-
-                        $created_time_val = $k->created_time;
-                        if (!empty($k->message)) {
-                            $message = $k->message;
-                        } else {
-                            $message = '--';
-                        }
-                        $id = $k->id;
-                        $reactions_array = $k->reactions;
-                        $shar_array = $k->shares;
-
-//                        echo '<pre>';
-//                        print_r($shar_array);
-//                        exit();
-
-                        foreach ($reactions_array as $x => $reac_vals) {
-                            if (!empty($reac_vals->total_count)) {
-                                $total_likes = $reac_vals->total_count;
-                            }
-                        }
-
-//                        foreach ($shar_array as $p => $share_vals) {
-//                            $total_shares = $share_vals;
-//                        }
-                        if (!empty($shar_array->count)) {
-                            $total_shares = $shar_array->count;
-                        }
-
-                        $post_value_id = explode('_', $id);
-                        $post_id = $post_value_id[1];
-                        $created_time = date('Y-m-d H:i:s', strtotime($created_time_val));
-                        $date = date('Y-m-d');
-                        $likes = $total_likes;
-                        $shares = $total_shares;
-
-                        $mdl = new MediaPostRanking();
-                        $mdl->CreatedOn = $created_time;
-                        $mdl->PostID = $post_id;
-                        $mdl->TotalShare = $shares;
-//                        $mdl->PostMessage = $message;
-                        $mdl->CountDate = $date;
-                        $mdl->MediaID = 1;
-                        $mdl->MediaPageID = $page_row_id;
-                        $mdl->TotalLikes = $likes;
-                        $mdl->Active = 'Y';
-                        $mdl->EnteredOn = date('Y-m-d H:i:s');
-                        $mdl->EnteredBy = 2;
-                        $mdl->BranchID = 2;
-                        $mdl->IsDeleted = 'N';
-
-//                        $last_count = MediaPostRanking::find()->where(['PostID' => $post_id])->andWhere(['MediaPageID'=>$page_row_id])->groupBy('ID desc')->one();
-//                        if(!empty($last_count)){
-//                            $last_like_count = $last_count->TotalLikes;
-//                            $last_share_count = $last_count->TotalShare;
-//
-//                            $new_likes = $total_likes - $last_like_count;
-//                            $mdl->newLikes = $new_likes;
-//                        }
-                        $validation = MediaPostRanking::find()->where(['PostID' => $post_id])->andWhere(['MediaPageID' => $page_row_id])->andWhere(['CountDate' => $date])->one();
-                        if (!empty($validation)) {
-                            continue;
-                        }
-                        if ($mdl->save()) {
-                        } else {
-                            print_r($mdl->getErrors());
-                            exit();
-                        }
-
-                    }
-                }
-            }
-
-        }
-        echo "-----14-----";
 
         echo 'Done';
         exit();
@@ -3689,6 +2437,115 @@ class MediaPostRankingController extends \yii\web\Controller
                 echo "done";
             }
         }
+    }
+
+    public function actionPostLikesNames()
+    {
+
+
+        $get_links = MediaLinks::find()->where('MediaID =1 and Active = "Y" and BranchID = 2')->all();// MediaID =1 is facebook
+        if (!empty($get_links)) {
+            $likes = 0;
+            foreach ($get_links as $v_als) {
+                $page_row_id = $v_als->ID;
+                $get_tokens = PagesCredentials::find()->where(['PageID' => $page_row_id])->one();
+
+                if (!empty($get_tokens)) {
+                    $app_id = $get_tokens->AppID;
+                    $AppSecret = $get_tokens->AppSecret;
+                    $PageToken = $get_tokens->PageToken;
+                    $pageID = $get_tokens->PageUserID;
+                    $data_objects = CommonFunctions::fbpostlikesnames($app_id, $AppSecret, $PageToken, '', $pageID);
+                    $body_array = $data_objects;
+                    $data = $body_array->data;
+
+
+                    foreach($data as $v){
+                        $reactions = $v->reactions->data;
+                        $reactions_like = $v->likes;
+
+                        //print_r($reactions_like);
+
+
+                        $i = 0;
+                        if(!empty($reactions)) {
+                            $i++;
+                            foreach ($reactions as $s) {
+                                $post_value_id = explode('_', $v->id);
+                                $post_id = $post_value_id[1];
+                                $profile_name = $s->name;
+                                $reaction = $s->type;
+
+                                $mdl = new MediaPostLikedby;
+                                $mdl->PostID = $post_id;
+                                $mdl->PageID = $get_tokens->PageID;
+                                $mdl->ProfileName = $profile_name;
+                                $mdl->Reaction = $reaction;
+                                $mdl->RecordDate = date('Y-m-d');
+                                $mdl->Enteredon = date('Y-m-d H:i:s');
+                                $mdl->BranchID = $get_tokens->BranchID;
+                                $chk = MediaPostLikedby::find()->where('PostID =' . $post_id . ' and PageID =' . $get_tokens->PageID . ' and ProfileName ="' . $profile_name . '"')->one();
+                                if (empty($chk)) {
+                                    if ($mdl->save()) {
+
+                                    } else {
+                                        print_r($mdl->getErrors());
+                                        exit();
+                                    }
+                                } else {
+                                    continue;
+                                }
+
+                            }
+                            Yii::$app->media_db->createCommand("UPDATE media_post_likedby mp set mp.EmployeeID = (select e.ID from live_aaa_cloud_cms.employees e where e.Facebook = mp.ProfileName) where mp.PostID = '" . $post_id . "'")->execute();
+                            Yii::$app->media_db->createCommand("UPDATE media_post_likedby set Status = 'Y' where EmployeeID IS NOT NULL")->execute();
+                        }else{
+                                if(!empty($reactions_like)){
+                                    foreach($reactions_like as $sd){
+                                        foreach($sd as $x) {
+                                            $post_value_id = explode('_', $v->id);
+                                            $post_id = $post_value_id[1];
+                                            if(empty($x->name)){
+                                                $by_name = 'No Name';
+                                            }else{
+                                                $by_name = $x->name;
+                                            }
+                                            $profile_name = $by_name;
+                                            $reaction = 'LIKE';
+
+                                            $mdl = new MediaPostLikedby;
+                                            $mdl->PostID = $post_id;
+                                            $mdl->PageID = $get_tokens->PageID;
+                                            $mdl->ProfileName = $profile_name;
+                                            $mdl->Reaction = $reaction;
+                                            $mdl->RecordDate = date('Y-m-d');
+                                            $mdl->Enteredon = date('Y-m-d H:i:s');
+                                            $mdl->BranchID = $get_tokens->BranchID;
+                                            $chk = MediaPostLikedby::find()->where('PostID =' . $post_id . ' and PageID =' . $get_tokens->PageID . ' and ProfileName ="' . $profile_name . '"')->one();
+                                            if (empty($chk)) {
+                                                if ($mdl->save()) {
+
+                                                } else {
+                                                    print_r($mdl->getErrors());
+                                                    exit();
+                                                }
+                                            } else {
+                                                continue;
+                                            }
+                                        }
+                                    }
+                                }
+                        }
+                    }
+
+                }
+            }
+
+        }
+
+        echo '--Done';
+        exit();
+
     }
 
     public function actionJob()
