@@ -169,15 +169,15 @@ class LoginController extends Controller
     {
         $api_data_streem = file_get_contents("php://input");
 
-        //$api_data_streem = '[{  "EmployeeID":"183","BranchID":"2"}]';
+        //$api_data_streem = '{  "EmployeeID":"183","BranchID":"2"}';
 
         $data = json_decode($api_data_streem);
 
         if (!empty($data)) {
-            foreach ($data as $v) {
-
-                $employee_id = $v->EmployeeID;
-            }
+//            foreach ($data as $v) {
+//
+//                $employee_id = $v->EmployeeID;
+//            }
             $employee_id = $data->EmployeeID;
             $branch_id = $data->BranchID;
 
@@ -195,7 +195,26 @@ class LoginController extends Controller
                     }else{
                         $conatct_name = 'No Name';
                     }
-                    $number_list[] = array('ContactID'=>$v->ContactID,'ContactNumber' => $v->ContactNumber, 'ContactName'=>$conatct_name,'ContactNotes' => $v->ContactNotes);
+                    $contact_id = $v->ContactID;
+//                    $conatc_info = ContactNumberList::find()->where(['ID'=>$contact_id])->one();
+//                    $call_history_info = Yii::$app->contact_db->createCommand("SELECT CallFilePath,ResponseID,OtherNote,AudioNote,UserID,EnteredOn FROM job_call_responses WHERE ContactID =".$contact_id)->queryAll();
+//                    $call_history_info = CommonFunctions::arrayToObject($call_history_info);
+//
+//                    unset($call_responses);
+//                    if (!empty($call_history_info)) {
+//
+//                        foreach ($call_history_info as $call_dtl) {
+//                            $responce_info = CommonFunctions::printResponcseName($call_dtl->ResponseID);
+//                            $call_by_info = CommonFunctions::printEmployeeName($call_dtl->UserID,$branch_id);
+//                            $call_on = date('d M, Y',strtotime($call_dtl->EnteredOn));
+//                            $call_responses[] = array('CallRecording' => $call_dtl->CallFilePath, 'AudioNote' => $call_dtl->AudioNote, 'OtherNote' => $call_dtl->OtherNote,'ResponceNote'=>$responce_info,'CallBy'=>$call_by_info,'CallDate'=>$call_on);
+//                        }
+//
+//
+//                        //$history_data = array('ContactInfo'=>$contact_dtl,'CallHistory' => $call_responses);
+//                    }
+                    //$number_list[] = array('ContactID'=>$v->ContactID,'ContactNumber' => $v->ContactNumber, 'ContactName'=>$conatct_name,'ContactNotes' => $v->ContactNotes,'CallHistory' => $call_responses);
+                    $number_list[] = array('ContactID'=>$contact_id,'ContactNumber' => $v->ContactNumber, 'ContactName'=>$conatct_name,'ContactNotes' => $v->ContactNotes);
                 }
 
                 $responce_message = array('Code' => '200', 'message' => 'Packet Fetched!');
@@ -263,8 +282,8 @@ class LoginController extends Controller
 
 
                 foreach ($call_history_info as $v) {
-                    $responce_info = $v->ResponseID;
-                    $call_by_info = $v->UserID;
+                    $responce_info = CommonFunctions::printResponcseName($v->ResponseID);
+                    $call_by_info = CommonFunctions::printEmployeeName($v->UserID,$BranchID);
                     $call_on = date('d M, Y',strtotime($v->EnteredOn));
                     $call_responses[] = array('CallRecording' => $v->CallFilePath, 'AudioNote' => $v->AudioNote, 'OtherNote' => $v->OtherNote,'ResponceNote'=>$responce_info,'CallBy'=>$call_by_info,'CallDate'=>$call_on);
                 }

@@ -2442,7 +2442,7 @@ class MediaPostRankingController extends \yii\web\Controller
     public function actionPostLikesNames()
     {
 
-
+        $emp_table_db = 'aaacrm_live_cloud_cms';
         $get_links = MediaLinks::find()->where('MediaID =1 and Active = "Y" and BranchID = 2')->all();// MediaID =1 is facebook
         if (!empty($get_links)) {
             $likes = 0;
@@ -2497,7 +2497,7 @@ class MediaPostRankingController extends \yii\web\Controller
                                 }
 
                             }
-                            Yii::$app->media_db->createCommand("UPDATE media_post_likedby mp set mp.EmployeeID = (select e.ID from live_aaa_cloud_cms.employees e where e.Facebook = mp.ProfileName) where mp.PostID = '" . $post_id . "'")->execute();
+                            Yii::$app->media_db->createCommand("UPDATE media_post_likedby mp set mp.EmployeeID = (select e.ID from ".$emp_table_db.".employees e where e.Facebook = mp.ProfileName) where mp.PostID = '" . $post_id . "'")->execute();
                             Yii::$app->media_db->createCommand("UPDATE media_post_likedby set Status = 'Y' where EmployeeID IS NOT NULL")->execute();
                         }else{
                                 if(!empty($reactions_like)){
@@ -2537,6 +2537,8 @@ class MediaPostRankingController extends \yii\web\Controller
                                                 continue;
                                             }
                                         }
+                                        Yii::$app->media_db->createCommand("UPDATE media_post_likedby mp set mp.EmployeeID = (select e.ID from ".$emp_table_db.".employees e where e.Facebook = mp.ProfileName) where mp.PostID = '" . $post_id . "'")->execute();
+                                        Yii::$app->media_db->createCommand("UPDATE media_post_likedby set Status = 'Y' where EmployeeID IS NOT NULL")->execute();
                                     }
                                 }
                         }
