@@ -92,9 +92,17 @@ class LoginController extends Controller
             $emei_no = $data->EMEI;
             $user_record = User::find()->where(['UserName' => $user])->andWhere(['PasswordKey' => $pass])->andWhere(['Active' => 'Y'])->andWhere(AppConstants::get_active_record_only)->one();
             if (!empty($user_record)) {
+                $emp_id = $user_record->EmpID;
+
+                $employee_info = CommonFunctions::selectEmployeeInfo($emp_id,$user_record->BranchID);
+
                 $emp_name = CommonFunctions::printEmployeeName($user_record->EmpID,$user_record->BranchID);
+                $emp_gender = CommonFunctions::printGender($employee_info->Gender);
+                $emp_dep = CommonFunctions::printDepartment($employee_info->DepartmentID);
+                $emp_desgination = CommonFunctions::printDesignation($employee_info->DesignationID);
+                $emp_branch = CommonFunctions::selectCompanyBranchInfo($user_record->BranchID);
                 $responce_message = array('Code' => '200', 'message' => 'Login Successful');
-                $responce_data = array('UserID' => $user_record->id, 'BranchID' => $user_record->BranchID, 'EmployeeID' => $user_record->EmpID, 'EmpName' => $emp_name);
+                $responce_data = array('UserID' => $user_record->id, 'BranchID' => $user_record->BranchID, 'EmployeeID' => $user_record->EmpID, 'EmpName' => $emp_name, 'DOB' => $employee_info->DateOfBirth, 'Gender' => $emp_gender, 'Designation' => $emp_desgination, 'Department' => $emp_dep, 'OfficeBranch' => $emp_branch->BranchName);
 
                 $emei_valid_aray = '';
                 if (!empty($emei_no)) {
