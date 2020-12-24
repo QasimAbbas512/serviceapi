@@ -129,7 +129,7 @@ class ServiceController extends Controller
         foreach($data as $k=>$v){
             $uuid = $v->UUID;
         }
-
+       //echo $uuid = $data->UUID;exit();
        $responce_action = 'call_response';
 
        $response = CommonFunctions::SaveNodes($responce_action,$posting_data,$uuid);

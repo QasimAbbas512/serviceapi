@@ -98,11 +98,11 @@ class LoginController extends Controller
 
                 $emp_name = CommonFunctions::printEmployeeName($user_record->EmpID,$user_record->BranchID);
                 $emp_gender = CommonFunctions::printGender($employee_info->Gender);
-                $emp_dep = CommonFunctions::printDepartment($employee_info->DepartmentID);
-                $emp_desgination = CommonFunctions::printDesignation($employee_info->DesignationID);
+                $emp_dep = CommonFunctions::printDepartment($employee_info->DepartmentID,$user_record->BranchID);
+                $emp_desgination = CommonFunctions::printDesignation($employee_info->DesignationID,$user_record->BranchID);
                 $emp_branch = CommonFunctions::selectCompanyBranchInfo($user_record->BranchID);
                 $responce_message = array('Code' => '200', 'message' => 'Login Successful');
-                $responce_data = array('UserID' => $user_record->id, 'BranchID' => $user_record->BranchID, 'EmployeeID' => $user_record->EmpID, 'EmpName' => $emp_name, 'DOB' => $employee_info->DateOfBirth, 'Gender' => $emp_gender, 'Designation' => $emp_desgination, 'Department' => $emp_dep, 'OfficeBranch' => $emp_branch->BranchName);
+               // $responce_data = array('UserID' => $user_record->id, 'BranchID' => $user_record->BranchID, 'EmployeeID' => $user_record->EmpID, 'EmpName' => $emp_name, 'DOB' => $employee_info->DateOfBirth, 'Gender' => $emp_gender, 'Designation' => $emp_desgination, 'Department' => $emp_dep, 'OfficeBranch' => $emp_branch->BranchName);
 
                 $emei_valid_aray = '';
                 if (!empty($emei_no)) {
@@ -130,7 +130,7 @@ class LoginController extends Controller
                             $resp_vals = $val_arr;
                         }
 
-                        $responce_data = array('UserType'=>$user_type,'UserID' => $user_record->id, 'BranchID' => $user_record->BranchID, 'EmployeeID' => $user_record->EmpID, 'EmpName' => $emp_name,'Headings'=>$heading,'InputTypes'=>$input_type,'Values'=>$val_arr);
+                        $responce_data = array('UserType'=>$user_type,'UserID' => $user_record->id, 'BranchID' => $user_record->BranchID, 'EmployeeID' => $user_record->EmpID, 'EmpName' => $emp_name,'DOB' => $employee_info->DateOfBirth, 'Gender' => $emp_gender, 'Designation' => $emp_desgination, 'Department' => $emp_dep, 'OfficeBranch' => $emp_branch->BranchName,'Headings'=>$heading,'InputTypes'=>$input_type,'Values'=>$val_arr);
                         $responce = array('message' => $responce_message,'data'=>$responce_data);
                         if(empty($resp_vals) || empty($heading)){
                             $responce_message = array('Code' => '403', 'message' => 'Login verified But Data Options Not Available');

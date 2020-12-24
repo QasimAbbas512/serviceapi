@@ -2458,7 +2458,11 @@ class MediaPostRankingController extends \yii\web\Controller
                     $data_objects = CommonFunctions::fbpostlikesnames($app_id, $AppSecret, $PageToken, '', $pageID);
                     $body_array = $data_objects;
                     $data = $body_array->data;
-
+//                    if($page_row_id == 32){
+//                        echo '<pre>';
+//                        print_r($data);
+//                        exit();
+//                    }
 
                     foreach($data as $v){
                         $reactions = $v->reactions->data;
