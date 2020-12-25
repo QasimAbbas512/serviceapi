@@ -6,6 +6,7 @@ use Yii;
 use app\models\UserMobileInfo;
 use app\models\AppResponse;
 use app\models\AppResponseDtl;
+use app\models\User;
 use CommonFunctions;
 use AppConstants;
 use GetParams;
@@ -146,4 +147,38 @@ class ServiceController extends Controller
 
         return $response;
    }
+
+   public function actionChangePin()
+    {
+        //$api_data_streem = file_get_contents("php://input");
+        $api_data_streem = '{  "UserID":"160",
+                                 "OldPin":"qasim123",
+                                 "NewKey":"qasim123456"}';
+        $data = json_decode($api_data_streem);
+
+        if (!empty($data)) {
+
+            $user_id = $data->UserID;
+            $old_pass = $data->OldPin;
+            $new_key = $data->NewKey;
+            //echo $user_id.'-'.$old_pass.'-'.$new_key;exit();
+            $user_record = User::find()->where(['EmpID' => $user_id])->andWhere(['PasswordKey' => $old_pass])->andWhere(['Active' => 'Y'])->andWhere(AppConstants::get_active_record_only)->one();
+            if (!empty($user_record)) {
+
+                //Yii::$app->db->createCommand("update user set PasswordKey = '".$new_key."' where EmpID =".$user_id)->execute();
+                $responce_message = array('Code' => '200', 'message' => 'New Password Updated');
+                $responce = array('message' => $responce_message);
+                $returnVal = json_encode($responce);
+
+
+            } else {
+                $responce_message = array('Code' => '403', 'message' => 'Old password not valid');
+                $responce = array('message' => $responce_message);
+                $returnVal = json_encode($responce);
+
+            }
+            return $returnVal;
+        }
+    }
+
 }
