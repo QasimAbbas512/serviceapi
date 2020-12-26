@@ -41,7 +41,7 @@ class ServiceController extends Controller
      */
     public function beforeAction($action)
     {
-        if ($action->id == 'response-options' || $action->id == 'post-dialer-response') {
+        if ($action->id == 'response-options' || $action->id == 'post-dialer-response' || $action->id == 'change-pin') {
             $this->enableCsrfValidation = false;
         }
 
@@ -150,10 +150,10 @@ class ServiceController extends Controller
 
    public function actionChangePin()
     {
-        //$api_data_streem = file_get_contents("php://input");
-        $api_data_streem = '{  "UserID":"160",
-                                 "OldPin":"qasim123",
-                                 "NewKey":"qasim123456"}';
+        $api_data_streem = file_get_contents("php://input");
+//        $api_data_streem = '{  "UserID":"160",
+//                                 "OldPin":"qasim123",
+//                                 "NewKey":"qasim123456"}';
         $data = json_decode($api_data_streem);
 
         if (!empty($data)) {
