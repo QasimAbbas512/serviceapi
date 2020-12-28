@@ -47,7 +47,7 @@ class AutoPacketDtlController extends Controller
                 $packetID = $value->ID;
 
 
-                $contact_record = ContactNumberList::find()->where('Assigned = "N"')->all();
+                $contact_record = ContactNumberList::find()->where('Assigned = "N"')->limit(10)->all();
 
                 if (!empty($contact_record)) {
 
@@ -56,12 +56,8 @@ class AutoPacketDtlController extends Controller
                         $contactID = $value->ID;
                         $contactNo = $value->ContactNumber;
                         $contactNotes = $value->ContactNotes;
-
-                    }
-
                         $date = date('Y-m-d H:i:s');
 
-                        for ($i = 0; $i <= 10; $i++) {
                             $model = new JobPacketDtl();
                             $model->PacketID = $packetID;
                             $model->ContactID = $contactID;
@@ -71,28 +67,26 @@ class AutoPacketDtlController extends Controller
                             $model->EnteredOn = $date;
                             $model->BranchID = 2;
                             if ($model->save()) {
-                                $sqL = 'update contact_number_list set Assigned = "Y" where ID = ."$contactID"';
+                                $sqL = 'update contact_number_list set Assigned = "Y" where ID = ' . $contactID;
                                 Yii::$app->contact_db->createCommand($sqL)->execute();
                                 //return $this->redirect(['index']);
                             } else {
                                 print_r($model->getErrors());
                                 exit();
                             }
-                        }
-
-
                     }
-
                 }
 
             }
 
-            $sql = 'update job_packets set PostsStatus = 1 limit 10 ';
-            Yii::$app->contact_db->createCommand($sql)->execute();
-
-
-            exit();
-
         }
 
+        $sql = 'update job_packets set PostsStatus = 1 limit 10 ';
+        Yii::$app->contact_db->createCommand($sql)->execute();
+
+
+        exit();
+
     }
+
+}
