@@ -14,7 +14,7 @@ use yii\filters\VerbFilter;
 /**
  * JobPacketDtlController implements the CRUD actions for JobPacketDtl model.
  */
-class JobPacketDtlController extends Controller
+class AutoPacketController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -47,12 +47,12 @@ class JobPacketDtlController extends Controller
         $model = new JobPackets();
         $PacketName = $toDate."--".$FromDate;
         $model->PacketName = $PacketName;
-        $model->Description = "blah blah blah";
+        $model->Description = "Testing for app";
         $model->ToDate = $toDate;
         $model->FromDate = $FromDate;
-        $model->EnteredBy = 1;
+        $model->EnteredBy = 2;
         $model->EnteredOn = $date;
-        $model->BranchID = 1;
+        $model->BranchID = 2;
         $model->PostsStatus = 0;
          echo $PacketName.'<br>';
         

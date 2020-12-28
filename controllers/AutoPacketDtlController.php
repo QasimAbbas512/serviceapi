@@ -14,7 +14,7 @@ use yii\filters\VerbFilter;
 /**
  * JobPacketDtlController implements the CRUD actions for JobPacketDtl model.
  */
-class JobPacketDtlController extends Controller
+class AutoPacketDtlController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -38,8 +38,8 @@ class JobPacketDtlController extends Controller
     
     public function actionPacketDtlMaking()
     {
-        $sql = 'update job_packets set PostsStatus = 1 limit = 10 ';
-            Yii::$app->machine_db->createCommand($sql)->execute();
+        $sql = 'update job_packets set PostsStatus = 1 limit 10 ';
+            Yii::$app->contact_db->createCommand($sql)->execute();
 
              $Packet_record = JobPackets::find()->where('PostsStatus = 0')->all();
 
@@ -49,10 +49,10 @@ class JobPacketDtlController extends Controller
 
                            $packetID = $value->ID;
                            
-            $sqL = 'update contact_number_list set Assigned = Y limit = 100 ';
-            Yii::$app->machine_db->createCommand($sqL)->execute();
+            $sqL = 'update contact_number_list set Assigned = "Y" limit 15 ';
+            Yii::$app->contact_db->createCommand($sqL)->execute();
 
-             $contact_record = ContactNumberList::find()->where('Assigned = N')->all();
+             $contact_record = ContactNumberList::find()->where('Assigned = "N"')->all();
 
              if(!empty($contact_record)) {
 
@@ -73,9 +73,9 @@ class JobPacketDtlController extends Controller
         $model->ContactID = $contactID;
         $model->ContactNumber = $contactNo;
         $model->ContactNotes = $contactNotes;
-        $model->EnteredBy = 1;
+        $model->EnteredBy = 2;
         $model->EnteredOn = $date;
-        $model->BranchID = 1;
+        $model->BranchID = 2;
          
        }
         }
