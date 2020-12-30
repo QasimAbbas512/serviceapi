@@ -148,6 +148,60 @@ class ServiceController extends Controller
         return $response;
    }
 
+   public function actionSort(){
+       $nm = $_REQUEST['table'];
+       $limit = $_REQUEST['limit'];
+       if(empty($nm)){
+           $field_work_for = 'Contact1';
+       }else{
+           $field_work_for = 'Contact'.$nm;
+       }
+       if(empty($limit)){
+           $limit = 1000;
+       }
+
+       Yii::$app->faiz->createCommand("update faiz_data set status = 'Y' where " . $field_work_for . " = ''")->execute();
+       Yii::$app->faiz->createCommand("update faiz_data set status = 'Y' where " . $field_work_for . " = 0")->execute();
+       Yii::$app->faiz->createCommand("update faiz_data set status = 'Y' where " . $field_work_for . " = 'Null'")->execute();
+       $rst = Yii::$app->faiz->createCommand("select distinct(".$field_work_for.") from faiz_data where status = 'N' limit 2")->queryAll();
+       //$rst = CommonFunctions::arrayToObject($rst);
+//       echo '<pre>';
+//       print_r($rst);
+//       exit();
+       if(!empty($rst) && count($rst) > 0) {
+           foreach ($rst as $v) {
+               // echo $v->File.'-'.$v->Name.'-'.$v->Contact1.'<br>';
+               $contact_no = $v['Contact' . $nm];
+               $chk_number = Yii::$app->faiz->createCommand("select * from faiz_data where " . $field_work_for . " =  '$contact_no' order by id ASC limit 1")->queryAll();
+               $chk_number = CommonFunctions::arrayToObject($chk_number);
+               if (!empty($chk_number)) {
+                   foreach ($chk_number as $val) {
+                       $current_id = $val->id;
+                       Yii::$app->faiz->createCommand("update faiz_data set " . $field_work_for . " = NULL where id !=" . $current_id . " and " . $field_work_for . " = '$contact_no'")->execute();
+                       //echo "update faiz_data set " . $field_work_for . " = NULL where id !=" . $current_id . " and " . $field_work_for . " = '$contact_no'<br>";
+                       for ($i = 1; $i <= 5; $i++) {
+                           if ($i != $nm) {
+                               //echo "update faiz_data set Contact".$i." = NULL where Contact".$i." = '$contact_no'<br>";
+                               Yii::$app->faiz->createCommand("update faiz_data set Contact2 = NULL where Contact2 = '$contact_no'")->execute();
+                           }
+                       }
+
+
+                       Yii::$app->faiz->createCommand("update faiz_data set status = 'Y' where id =" . $current_id)->execute();
+                       // echo $current_id.'-'.$v->File.'-'.$v->Name.'-'.$v->Contact1.'<br>';
+                      // exit();
+                   }
+               }
+
+
+           }
+            echo $limit.' Records Done For '.$field_work_for;
+           header("Refresh: 2;");
+       }else{
+          echo $field_work_for.' column is finished';
+       }
+   }
+
    public function actionChangePin()
     {
         $api_data_streem = file_get_contents("php://input");
@@ -165,7 +219,7 @@ class ServiceController extends Controller
             $user_record = User::find()->where(['EmpID' => $user_id])->andWhere(['PasswordKey' => $old_pass])->andWhere(['Active' => 'Y'])->andWhere(AppConstants::get_active_record_only)->one();
             if (!empty($user_record)) {
 
-                //Yii::$app->db->createCommand("update user set PasswordKey = '".$new_key."' where EmpID =".$user_id)->execute();
+                Yii::$app->db->createCommand("update user set PasswordKey = '".$new_key."' where EmpID =".$user_id)->execute();
                 $responce_message = array('Code' => '200', 'message' => 'New Password Updated');
                 $responce = array('message' => $responce_message);
                 $returnVal = json_encode($responce);
