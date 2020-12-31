@@ -28,7 +28,7 @@ use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
 use linslin\yii2\curl;
 
-class PacketCronController extends Controller
+class CallResponseController extends Controller
 {
 
     /**
@@ -80,6 +80,9 @@ class PacketCronController extends Controller
         Yii::$app->machine_db->createCommand($sql)->execute();
 
         $call_record = NodeRequestedDate::find()->where('Status = 0 and Picked = 1 and Completed =0')->all();
+//        echo '<pre>';
+//        print_r($call_record);
+//        exit();
         if (!empty($call_record)) {
 
             $transaction = Yii::$app->contact_db->beginTransaction();
