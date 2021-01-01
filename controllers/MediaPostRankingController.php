@@ -2441,9 +2441,11 @@ class MediaPostRankingController extends \yii\web\Controller
 
     public function actionPostLikesNames()
     {
-
+        $start_time = date('d-M-Y H:i:s');
+        $today_date = date('Y-m-d');
         $emp_table_db = 'aaacrm_live_cloud_cms';
         $get_links = MediaLinks::find()->where('MediaID =1 and Active = "Y" and BranchID = 2')->all();// MediaID =1 is facebook
+        $today_links = MediaPostLikedby::find()->where('RecordDate = "'.$today_date.'"')->count();
         if (!empty($get_links)) {
             $likes = 0;
             foreach ($get_links as $v_als) {
@@ -2550,10 +2552,13 @@ class MediaPostRankingController extends \yii\web\Controller
 
                 }
             }
-
+            header("Refresh: 1800;");
         }
+        $today_links2 = MediaPostLikedby::find()->where('RecordDate = "'.$today_date.'"')->count();
+        $new = $today_links2 - $today_links;
+        $end_time = date('d-M-Y H:i:s');
+        echo 'Done <br>'.$start_time.'</br>'.$end_time.'<br>new: '.$new;
 
-        echo '--Done';
         exit();
 
     }
