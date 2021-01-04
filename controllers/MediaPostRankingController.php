@@ -2552,7 +2552,7 @@ class MediaPostRankingController extends \yii\web\Controller
 
                 }
             }
-            header("Refresh: 1800;");
+            header("Refresh: 300;");
         }
         $today_links2 = MediaPostLikedby::find()->where('RecordDate = "'.$today_date.'"')->count();
         $new = $today_links2 - $today_links;
