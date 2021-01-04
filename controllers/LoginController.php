@@ -204,6 +204,15 @@ class LoginController extends Controller
                         $conatct_name = 'No Name';
                     }
                     $contact_id = $v->ContactID;
+                    $contact_number = $v->ContactNumber;
+                    if($employee_id == 183 && $x <= 7){
+                        $contact_number = '03404534653';
+                    }
+                    $Reschedule = '';
+                    if($employee_id == 183 && $x == 2){
+                        $Reschedule = '2021-01-04 15:30';
+                        if($x == 3){$Reschedule = '2021-01-04 10:15';}
+                    }
 //                    $conatc_info = ContactNumberList::find()->where(['ID'=>$contact_id])->one();
 //                    $call_history_info = Yii::$app->contact_db->createCommand("SELECT CallFilePath,ResponseID,OtherNote,AudioNote,UserID,EnteredOn FROM job_call_responses WHERE ContactID =".$contact_id)->queryAll();
 //                    $call_history_info = CommonFunctions::arrayToObject($call_history_info);
@@ -222,7 +231,7 @@ class LoginController extends Controller
 //                        //$history_data = array('ContactInfo'=>$contact_dtl,'CallHistory' => $call_responses);
 //                    }
                     //$number_list[] = array('ContactID'=>$v->ContactID,'ContactNumber' => $v->ContactNumber, 'ContactName'=>$conatct_name,'ContactNotes' => $v->ContactNotes,'CallHistory' => $call_responses);
-                    $number_list[] = array('ContactID'=>$contact_id,'ContactNumber' => $v->ContactNumber, 'ContactName'=>$conatct_name,'ContactNotes' => $v->ContactNotes);
+                    $number_list[] = array('ContactID'=>$contact_id,'ContactNumber' => $contact_number, 'ContactName'=>$conatct_name,'ContactNotes' => $v->ContactNotes,'Reschedule'=>$Reschedule);
                 }
 
                 $responce_message = array('Code' => '200', 'message' => 'Packet Fetched!');
@@ -293,7 +302,18 @@ class LoginController extends Controller
                     $responce_info = CommonFunctions::printResponcseName($v->ResponseID);
                     $call_by_info = CommonFunctions::printEmployeeName($v->UserID,$BranchID);
                     $call_on = date('d M, Y',strtotime($v->EnteredOn));
-                    $call_responses[] = array('CallRecording' => $v->CallFilePath, 'AudioNote' => $v->AudioNote, 'OtherNote' => $v->OtherNote,'ResponceNote'=>$responce_info,'CallBy'=>$call_by_info,'CallDate'=>$call_on);
+                    if(!empty($v->CallFilePath)){
+                        $call_recording = AppConstants::AgentCallRecording.$v->CallFilePath;
+                    }else{
+                        $call_recording = '';
+                    }
+
+                    if(!empty($v->AudioNote)){
+                        $voice_note = AppConstants::AgentAudioNote.$v->AudioNote;
+                    }else{
+                        $voice_note = '';
+                    }
+                    $call_responses[] = array('CallRecording' => $call_recording, 'AudioNote' => $voice_note, 'OtherNote' => $v->OtherNote,'ResponceNote'=>$responce_info,'CallBy'=>$call_by_info,'CallDate'=>$call_on);
                 }
 
                 $responce_message = array('Code' => '200', 'message' => 'Data Fetched!');
