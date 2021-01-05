@@ -113,6 +113,7 @@ class CallResponseController extends Controller
                         $UserID = $val->UserID;
                         $user_info = CommonFunctions::UserInfo($UserID);
                         $call_request_branch = $user_info->BranchID;
+                        $employee_id = $user_info->EmpID;
                         $JobID = $val->JobID;
                         $CompanyID = $val->CompanyID;
                         $ContactID = $val->ContactID;
@@ -146,6 +147,7 @@ class CallResponseController extends Controller
                         $model->ContactID = $ContactID;
                         $model->ResponseID = $ResponseValues;
                         $model->UserID = $UserID;
+                        $model->EmployeeID = $employee_id;
                         $model->CallFilePath = $VoiceCall;
                         $model->OtherNote = $OtherNotes;
                         $model->PacketDtlID = $JobID;

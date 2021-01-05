@@ -2441,6 +2441,7 @@ class MediaPostRankingController extends \yii\web\Controller
 
     public function actionPostLikesNames()
     {
+        header("Refresh: 300;");
         $start_time = date('d-M-Y H:i:s');
         $today_date = date('Y-m-d');
         $emp_table_db = 'aaacrm_live_cloud_cms';
@@ -2552,7 +2553,7 @@ class MediaPostRankingController extends \yii\web\Controller
 
                 }
             }
-            header("Refresh: 300;");
+
         }
         $today_links2 = MediaPostLikedby::find()->where('RecordDate = "'.$today_date.'"')->count();
         $new = $today_links2 - $today_links;

@@ -16,6 +16,7 @@ use Yii;
  * @property string $AudioNote
  * @property string $OtherNote
  * @property int $UserID
+ * @property int $EmployeeID
  * @property string $MacInfo
  * @property string $UUID
  * @property string $Active
@@ -54,8 +55,8 @@ class JobCallResponses extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['PacketDtlID', 'JobPacketID', 'ContactID', 'ResponseID', 'UserID', 'MacInfo', 'EnteredOn', 'EnteredBy', 'BranchID'], 'required'],
-            [['PacketDtlID', 'JobPacketID', 'ContactID', 'ResponseID', 'UserID', 'EnteredBy', 'DeletedBy', 'BranchID'], 'integer'],
+            [['PacketDtlID', 'JobPacketID', 'ContactID', 'ResponseID', 'UserID', 'EmployeeID', 'MacInfo', 'EnteredOn', 'EnteredBy', 'BranchID'], 'required'],
+            [['PacketDtlID', 'JobPacketID', 'ContactID', 'ResponseID', 'UserID', 'EmployeeID', 'EnteredBy', 'DeletedBy', 'BranchID'], 'integer'],
             [['OtherNote'], 'string'],
             [['EnteredOn', 'DeletedOn'], 'safe'],
             [['CallFilePath'], 'string', 'max' => 100],
@@ -84,6 +85,7 @@ class JobCallResponses extends \yii\db\ActiveRecord
             'AudioNote' => 'Audio Note',
             'OtherNote' => 'Other Note',
             'UserID' => 'User ID',
+            'EmployeeID' => 'Employee ID',
             'MacInfo' => 'Mac Info',
             'Active' => 'Active',
             'EnteredOn' => 'Entered On',
