@@ -189,7 +189,7 @@ class LoginController extends Controller
             $employee_id = $data->EmployeeID;
             $branch_id = $data->BranchID;
 
-            $employee_list = Yii::$app->contact_db->createCommand("SELECT jp.PacketID,jp.ContactID,cl.ContactName, jp.ContactNumber,jp.ContactNotes
+            $employee_list = Yii::$app->contact_db->createCommand("SELECT jp.ID,jp.PacketID,jp.ContactID,cl.ContactName, jp.ContactNumber,jp.ContactNotes
                                                                     FROM job_packet_dtl jp, employee_job_packet_dtl ejp, contact_number_list cl
                                                                     WHERE ejp.PacketID = jp.PacketID and jp.ContactID = cl.ID and ejp.EmployeeID = '" . $employee_id . "' and ejp.BranchID = jp.BranchID and ejp.Status = 0 ")->queryAll();
 
@@ -231,7 +231,7 @@ class LoginController extends Controller
 //                        //$history_data = array('ContactInfo'=>$contact_dtl,'CallHistory' => $call_responses);
 //                    }
                     //$number_list[] = array('ContactID'=>$v->ContactID,'ContactNumber' => $v->ContactNumber, 'ContactName'=>$conatct_name,'ContactNotes' => $v->ContactNotes,'CallHistory' => $call_responses);
-                    $number_list[] = array('ContactID'=>$contact_id,'ContactNumber' => $contact_number, 'ContactName'=>$conatct_name,'ContactNotes' => $v->ContactNotes,'Reschedule'=>$Reschedule);
+                    $number_list[] = array('JobID'=>$v->ID,'ContactID'=>$contact_id,'ContactNumber' => $contact_number, 'ContactName'=>$conatct_name,'ContactNotes' => $v->ContactNotes,'Reschedule'=>$Reschedule);
                 }
 
                 $responce_message = array('Code' => '200', 'message' => 'Packet Fetched!');

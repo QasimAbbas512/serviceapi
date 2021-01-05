@@ -94,9 +94,21 @@ class CallResponseController extends Controller
 
                     $requested_data = $value->DataPacket;
                     $data = json_decode($requested_data);
+                    $val = $data;
+//                    echo '<pre>';
+//                    print_r($val);
+//                    echo $val->MacAddress;
+//                    exit();
+                    //foreach ($data as $key => $val) {
 
-                    foreach ($data as $key => $val) {
-
+                        $UUID = $val->UUID;
+                        $chk = JobCallResponses::find()->where(['UUID'=>$UUID])->one();
+                        if(empty($chk)){
+                            $job_message = 'UUID Already Added';
+//                            $update_msg = 'update node_requested_date set status = 1, Completed = 1,  job_message = "'.$job_message.'"  where ID = "' . $row_id . '"';
+//                            Yii::$app->machine_db->createCommand($update_msg)->execute();
+                            //continue;
+                        }
                         $macAddress = $val->MacAddress;
                         $UserID = $val->UserID;
                         $user_info = CommonFunctions::UserInfo($UserID);
@@ -104,14 +116,30 @@ class CallResponseController extends Controller
                         $JobID = $val->JobID;
                         $CompanyID = $val->CompanyID;
                         $ContactID = $val->ContactID;
-                        $ResponseValues = $val->ResponseValues;
+                        if(!empty($val->Skip)){
+                            $ResponseValues = AppConstants::SkipValue;
+                            $OtherNotes = $val->Skip;
+                        }else {
+                            $ResponseValues = $val->ResponseValues;
+                            $OtherNotes = $val->OtherNotes;
+                        }
+
                         $ProfileInfo = $val->ProfileInfo;
-                        $VoiceCall = $val->VoiceCall;
-                        $OtherNotes = $val->OtherNotes;
-                        $AudioNote = $val->{'AudioNotes'};
+                        if(!empty($val->VoiceCall)) {
+                            $VoiceCall = $val->VoiceCall;
+                        }else{
+                            $VoiceCall = 'NoCall';
+                        }
 
+                        if(!empty($val->AudioNotes)) {
+                            $AudioNote = $val->AudioNotes;
+                        }else{
+                            $AudioNote = 'NoVoiceNote';
+                        }
+                        //$AudioNote = $val->{'AudioNotes'};
 
-                        $voice_note_audio_files = implode(',', (array)$AudioNote);
+                        // for the time we consider only one voice note comming or it can be null also next we will update this
+                        //$voice_note_audio_files = implode(',', (array)$AudioNote);
 
                         $model = new JobCallResponses();
                         $model->MacInfo = $macAddress;
@@ -126,11 +154,12 @@ class CallResponseController extends Controller
                         $packet_data = $packet_record->PacketID;
 
                         $model->JobPacketID = $packet_data;
-                        $model->AudioNote = $voice_note_audio_files;
+                        $model->AudioNote = $AudioNote;//$voice_note_audio_files;
                         // echo '<pre>';
                         // print_r($voice_note_audio_files);
                         // exit();
 
+                        $model->UUID = $UUID;
                         $model->BranchID = $call_request_branch;
                         $model->EnteredOn = date('Y-m-d H:i:s');
                         $model->EnteredBy = 1;
@@ -139,9 +168,10 @@ class CallResponseController extends Controller
                             if ($model->save()) {
                                 $CompletedTime = date('Y-m-d H:i:s');
                                 $Tried = 1;
-                                $update_status = 'update node_requested_date set Picked = 1, status = 1, Completed = 1, PickedTime = "' . $PickedTime . '", CompletedTime = "' . $CompletedTime . '", Tried = "' . $Tried . '"  where ID = "' . $row_id . '"';
-
+                                $job_message = 'Executed Successfully';
+                                $update_status = 'update node_requested_date set Picked = 1, status = 1, Completed = 1, PickedTime = "' . $PickedTime . '", CompletedTime = "' . $CompletedTime . '", job_message = "'.$job_message.'", Tried = "' . $Tried . '"  where ID = "' . $row_id . '"';
                                 Yii::$app->machine_db->createCommand($update_status)->execute();
+
                                 $transaction2->commit();
                             } else {print_r($model->getErrors());exit();}
 
@@ -149,7 +179,7 @@ class CallResponseController extends Controller
                         } catch (Exception $e) {
                             $transaction2->rollback();
                         }
-                    }
+                    //}
                 }
 
                 $transaction->commit();
@@ -157,6 +187,8 @@ class CallResponseController extends Controller
             } catch (Exception $e) {
                 $transaction->rollback();
             }
+            echo 'Job Done';
+            exit();
         } else {
             echo 'No Data Found';
             exit();

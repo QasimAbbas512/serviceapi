@@ -17,6 +17,7 @@ use Yii;
  * @property string $OtherNote
  * @property int $UserID
  * @property string $MacInfo
+ * @property string $UUID
  * @property string $Active
  * @property string $EnteredOn
  * @property int $EnteredBy
@@ -53,13 +54,14 @@ class JobCallResponses extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['PacketDtlID', 'JobPacketID', 'ContactID', 'ResponseID', 'CallFilePath', 'AudioNote', 'OtherNote', 'UserID', 'MacInfo', 'EnteredOn', 'EnteredBy', 'BranchID'], 'required'],
+            [['PacketDtlID', 'JobPacketID', 'ContactID', 'ResponseID', 'UserID', 'MacInfo', 'EnteredOn', 'EnteredBy', 'BranchID'], 'required'],
             [['PacketDtlID', 'JobPacketID', 'ContactID', 'ResponseID', 'UserID', 'EnteredBy', 'DeletedBy', 'BranchID'], 'integer'],
             [['OtherNote'], 'string'],
             [['EnteredOn', 'DeletedOn'], 'safe'],
             [['CallFilePath'], 'string', 'max' => 100],
             [['AudioNote'], 'string', 'max' => 150],
             [['MacInfo'], 'string', 'max' => 30],
+            [['UUID'], 'string', 'max' => 255],
             [['Active', 'IsDeleted'], 'string', 'max' => 1],
             [['ContactID'], 'exist', 'skipOnError' => true, 'targetClass' => ContactNumberList::className(), 'targetAttribute' => ['ContactID' => 'ID']],
             [['JobPacketID'], 'exist', 'skipOnError' => true, 'targetClass' => JobPackets::className(), 'targetAttribute' => ['JobPacketID' => 'ID']],

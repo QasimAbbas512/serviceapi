@@ -34,6 +34,12 @@ use CommonFunctions;
  * @property string|null $AccountNo
  * @property string|null $AccountTitle
  * @property int|null $BankID
+ * @property string|null $EobiNo
+ * @property string|null $SocialMediaUser
+ * @property string|null $Facebook
+ * @property string|null $Linkedin
+ * @property string|null $Twitter
+ * @property string|null $Instagram
  * @property string|null $Active
  * @property string|null $EnteredOn
  * @property int $EnteredBy
@@ -99,7 +105,7 @@ class Employees extends \yii\db\ActiveRecord
             [['MiddleName', 'LastName', 'CellNo', 'AttMachineNo'], 'string', 'max' => 20],
             [['FullName'], 'string', 'max' => 85],
             [['GuardianRelation'], 'string', 'max' => 4],
-            [['Gender', 'IsDeleted'], 'string', 'max' => 1],
+            [['Gender', 'SocialMediaUser', 'IsDeleted'], 'string', 'max' => 1],
             [['CNIC', 'NTN_No'], 'string', 'max' => 30],
             [['ImageName'], 'string', 'max' => 150],
             [['Email', 'Address'], 'string', 'max' => 255],
