@@ -76,10 +76,10 @@ class CallResponseController extends Controller
 
         $GetNodeRequestLimit = AppConstants::getNodeRequestLimit;
 
-        $sql = 'update node_requested_date set Picked = 1 where status = 0 and Completed = 0 and Picked = 0 limit ' . $GetNodeRequestLimit;
+        $sql = 'update node_requested_date set Picked = 1 where status = 0 and Completed = 0 and Picked = 0 and RequestDestination = "call_response" limit ' . $GetNodeRequestLimit;
         Yii::$app->machine_db->createCommand($sql)->execute();
 
-        $call_record = NodeRequestedDate::find()->where('Status = 0 and Picked = 1 and Completed =0')->all();
+        $call_record = NodeRequestedDate::find()->where('Status = 0 and Picked = 1 and Completed =0 and RequestDestination = "call_response"')->all();
 //        echo '<pre>';
 //        print_r($call_record);
 //        exit();

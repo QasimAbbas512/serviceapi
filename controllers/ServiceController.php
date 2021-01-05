@@ -41,7 +41,7 @@ class ServiceController extends Controller
      */
     public function beforeAction($action)
     {
-        if ($action->id == 'response-options' || $action->id == 'post-dialer-response' || $action->id == 'change-pin') {
+        if ($action->id == 'response-options' || $action->id == 'post-dialer-response' || $action->id == 'change-pin' || $action->id == 'dialer-response-multiple') {
             $this->enableCsrfValidation = false;
         }
 
@@ -110,6 +110,61 @@ class ServiceController extends Controller
 
 
    }
+
+    public function actionDialerResponseMultiple(){
+
+        $posting_data = file_get_contents("php://input");
+//       $posting_data = '{"UUID":"0-WSD3:9l:440:45-1235688965","EmployeeID":"183","BranchID":"2","DateTime":"2021-01-05 16:25","Data":[{"UUID":"1-WSD3:9l:440:45-1235688965","MacAddress":"WSD3:9l:440:45",
+//         "UserID":"1",
+//         "JobID":"1",
+//         "CompanyID":"1",
+//         "ContactID":"5",
+//         "ResponseValues":"3",
+//         "ProfileInfo":"Address location area etc",
+//         "VoiceCall":"CallFileName.aac",
+//         "OtherNotes":"text notes",
+//         "AudioNotes":"audio.mp3"},
+//         {"UUID":"2-WSD3:9l:440:45-1235688965","MacAddress":"WSD3:9l:440:45",
+//         "UserID":"1",
+//         "JobID":"1",
+//         "CompanyID":"1",
+//         "ContactID":"5",
+//         "ResponseValues":"3",
+//         "ProfileInfo":"Address location area etc",
+//         "VoiceCall":"CallFileName.aac",
+//         "OtherNotes":"text notes",
+//         "AudioNotes":"audio.mp3"},
+//         {"UUID":"3-WSD3:9l:440:45-1235688965","MacAddress":"WSD3:9l:440:45",
+//         "UserID":"1",
+//         "JobID":"1",
+//         "CompanyID":"1",
+//         "ContactID":"5",
+//         "ResponseValues":"3",
+//         "ProfileInfo":"Address location area etc",
+//         "VoiceCall":"CallFileName.aac",
+//         "OtherNotes":"text notes",
+//         "AudioNotes":"audio.mp3"}]
+//         }';
+
+        $data = json_decode($posting_data);
+
+        $uuid = $data->UUID;
+        $responce_action = 'call_response_multiple';
+
+        $response = CommonFunctions::SaveNodes($responce_action,$posting_data,$uuid);
+        if($response == 1){
+            $message = array('Code' => '200', 'message' => 'Sucessfully Saved.');
+        }else if($response == 2){
+            $message = array('Code' => '403', 'message' => 'Request Against UUID Already Sent.');
+        }else{
+            $message = array('Code' => '403', 'message' => 'Not Saved.');
+        }
+
+        $response_array = array('Message'=>$message);
+        $response = json_encode($response_array);
+
+        return $response;
+    }
 
    public function actionPostDialerResponse(){
 
