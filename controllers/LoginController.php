@@ -254,6 +254,39 @@ class LoginController extends Controller
 
     }
 
+    // to save the data with destination = bulk_pending_by_user.
+    public function actionPendingRecord(){
+
+//        $posting_data = file_get_contents("php://input");
+        $posting_data = '{"UUID":"W-SD3:9l:440:45-1235688965","EmpID":"45",
+         "UserID":"7",
+         "Comments":"1",
+         "PeningJobs":"1,9,15,3,19,6,11,2",
+         }';
+
+        $data = json_decode($posting_data);
+
+//        foreach($data as $k=>$v){
+//            $uuid = $v->UUID;
+//        }
+        $uuid = $data->UUID;
+        $responce_action = 'bulk_pending_by_user';
+
+        $response = CommonFunctions::SaveNodes($responce_action,$posting_data,$uuid);
+        if($response == 1){
+            $message = array('Code' => '200', 'message' => 'Sucessfully Saved.');
+        }else if($response == 2){
+            $message = array('Code' => '403', 'message' => 'Request Against UUID Already Sent.');
+        }else{
+            $message = array('Code' => '403', 'message' => 'Not Saved.');
+        }
+
+        $response_array = array('Message'=>$message);
+        $response = json_encode($response_array);
+
+        return $response;
+    }
+
     public function actionContactDetails()
     {
         $api_data_streem = file_get_contents("php://input");
@@ -334,3 +367,5 @@ class LoginController extends Controller
     }
 
 }
+
+
