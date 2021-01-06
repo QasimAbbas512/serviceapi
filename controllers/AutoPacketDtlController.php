@@ -47,7 +47,11 @@ class AutoPacketDtlController extends Controller
                 $packetID = $value->ID;
 
 
-                $contact_record = ContactNumberList::find()->where('Assigned = "N"')->limit(10)->all();
+                $contact_record = ContactNumberList::find()->where('Assigned = "N"')->limit(15)->all();
+
+//                echo "<pre>";
+//                print_r($contact_record);
+//                exit();
 
                 if (!empty($contact_record)) {
 
@@ -76,13 +80,13 @@ class AutoPacketDtlController extends Controller
                             }
                     }
                 }
-
+                $sql = 'update job_packets set PostsStatus = 1 where ID = '.$packetID;
+                Yii::$app->contact_db->createCommand($sql)->execute();
             }
 
         }
 
-        $sql = 'update job_packets set PostsStatus = 1 limit 10 ';
-        Yii::$app->contact_db->createCommand($sql)->execute();
+
 
 
         exit();
