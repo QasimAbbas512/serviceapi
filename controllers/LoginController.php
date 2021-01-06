@@ -49,7 +49,7 @@ class LoginController extends Controller
 
     public function beforeAction($action)
     {
-        if ($action->id == 'call' || $action->id == 'verify' || $action->id == 'number-list' || $action->id == 'contact-details') {
+        if ($action->id == 'call' || $action->id == 'verify' || $action->id == 'number-list' || $action->id == 'contact-details' || $action->id == 'pending-record') {
             $this->enableCsrfValidation = false;
         }
 
@@ -257,12 +257,12 @@ class LoginController extends Controller
     // to save the data with destination = bulk_pending_by_user.
     public function actionPendingRecord(){
 
-//        $posting_data = file_get_contents("php://input");
-        $posting_data = '{"UUID":"W-SD3:9l:440:45-1235688965","EmpID":"45",
-         "UserID":"7",
-         "Comments":"1",
-         "PeningJobs":"1,9,15,3,19,6,11,2",
-         }';
+        $posting_data = file_get_contents("php://input");
+//        $posting_data = '{"UUID":"W-SD3:9l:440:45-1235688965","EmpID":"45",
+//         "UserID":"7",
+//         "Comments":"1",
+//         "PeningJobs":"1,9,15,3,19,6,11,2",
+//         }';
 
         $data = json_decode($posting_data);
 
