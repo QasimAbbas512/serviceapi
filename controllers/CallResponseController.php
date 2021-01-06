@@ -115,7 +115,7 @@ class CallResponseController extends Controller
                         $call_request_branch = $user_info->BranchID;
                         $employee_id = $user_info->EmpID;
                         $JobID = $val->JobID;
-                        
+
                         $ContactID = $val->ContactID;
 
                         if(!empty($val->Skip)){
