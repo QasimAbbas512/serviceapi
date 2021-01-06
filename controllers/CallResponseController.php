@@ -115,8 +115,9 @@ class CallResponseController extends Controller
                         $call_request_branch = $user_info->BranchID;
                         $employee_id = $user_info->EmpID;
                         $JobID = $val->JobID;
-                        $CompanyID = $val->CompanyID;
+                        
                         $ContactID = $val->ContactID;
+
                         if(!empty($val->Skip)){
                             $ResponseValues = AppConstants::SkipValue;
                             $OtherNotes = $val->Skip;
@@ -173,6 +174,7 @@ class CallResponseController extends Controller
                                 $job_message = 'Executed Successfully';
                                 $update_status = 'update node_requested_date set Picked = 1, status = 1, Completed = 1, PickedTime = "' . $PickedTime . '", CompletedTime = "' . $CompletedTime . '", job_message = "'.$job_message.'", Tried = "' . $Tried . '"  where ID = "' . $row_id . '"';
                                 Yii::$app->machine_db->createCommand($update_status)->execute();
+                                Yii::$app->contact_db->createCommand('update job_packet_dtl set Responce = "Y" where ID ='.$JobID)->execute();
 
                                 $transaction2->commit();
                             } else {print_r($model->getErrors());exit();}

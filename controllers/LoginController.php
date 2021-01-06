@@ -191,7 +191,7 @@ class LoginController extends Controller
 
             $employee_list = Yii::$app->contact_db->createCommand("SELECT jp.ID,jp.PacketID,jp.ContactID,cl.ContactName, jp.ContactNumber,jp.ContactNotes
                                                                     FROM job_packet_dtl jp, employee_job_packet_dtl ejp, contact_number_list cl
-                                                                    WHERE ejp.PacketID = jp.PacketID and jp.ContactID = cl.ID and ejp.EmployeeID = '" . $employee_id . "' and ejp.BranchID = jp.BranchID and ejp.Status = 0 ")->queryAll();
+                                                                    WHERE ejp.PacketID = jp.PacketID and jp.ContactID = cl.ID and ejp.EmployeeID = '" . $employee_id . "' and ejp.BranchID = jp.BranchID and jp.Responce = 'N' and ejp.Status = 0 ")->queryAll();
 
             if (!empty($employee_list)) {
                 $employee_list = CommonFunctions::arrayToObject($employee_list);
