@@ -2449,6 +2449,7 @@ class MediaPostRankingController extends \yii\web\Controller
         $today_links = MediaPostLikedby::find()->where('RecordDate = "'.$today_date.'"')->count();
         if (!empty($get_links)) {
             $likes = 0;
+            $g = 0;
             foreach ($get_links as $v_als) {
                 $page_row_id = $v_als->ID;
                 $get_tokens = PagesCredentials::find()->where(['PageID' => $page_row_id])->one();
@@ -2504,8 +2505,8 @@ class MediaPostRankingController extends \yii\web\Controller
                                 }
 
                             }
-                            Yii::$app->media_db->createCommand("UPDATE media_post_likedby mp set mp.EmployeeID = (select e.ID from ".$emp_table_db.".employees e where e.Facebook = mp.ProfileName) where mp.PostID = '" . $post_id . "'")->execute();
-                            Yii::$app->media_db->createCommand("UPDATE media_post_likedby set Status = 'Y' where EmployeeID IS NOT NULL")->execute();
+//                            Yii::$app->media_db->createCommand("UPDATE media_post_likedby mp set mp.EmployeeID = (select e.ID from ".$emp_table_db.".employees e where e.Facebook = mp.ProfileName) where mp.PostID = '" . $post_id . "'")->execute();
+//                            Yii::$app->media_db->createCommand("UPDATE media_post_likedby set Status = 'Y' where EmployeeID IS NOT NULL")->execute();
                         }else{
                                 if(!empty($reactions_like)){
                                     foreach($reactions_like as $sd){
@@ -2544,11 +2545,16 @@ class MediaPostRankingController extends \yii\web\Controller
                                                 continue;
                                             }
                                         }
-                                        Yii::$app->media_db->createCommand("UPDATE media_post_likedby mp set mp.EmployeeID = (select e.ID from ".$emp_table_db.".employees e where e.Facebook = mp.ProfileName) where mp.PostID = '" . $post_id . "'")->execute();
-                                        Yii::$app->media_db->createCommand("UPDATE media_post_likedby set Status = 'Y' where EmployeeID IS NOT NULL")->execute();
+//                                        Yii::$app->media_db->createCommand("UPDATE media_post_likedby mp set mp.EmployeeID = (select e.ID from ".$emp_table_db.".employees e where e.Facebook = mp.ProfileName) where mp.PostID = '" . $post_id . "'")->execute();
+//                                        Yii::$app->media_db->createCommand("UPDATE media_post_likedby set Status = 'Y' where EmployeeID IS NOT NULL")->execute();
                                     }
                                 }
                         }
+                        //$g++;
+                        //echo $g.'-'."UPDATE media_post_likedby mp set mp.EmployeeID = (select e.ID from ".$emp_table_db.".employees e where e.Facebook = mp.ProfileName) where mp.PostID = '" . $post_id . "'<br>";
+
+                        Yii::$app->media_db->createCommand("UPDATE media_post_likedby mp set mp.EmployeeID = (select e.ID from ".$emp_table_db.".employees e where e.Facebook = mp.ProfileName) where mp.EmployeeID IS NULL and mp.Status = 'N'")->execute();
+                        Yii::$app->media_db->createCommand("UPDATE media_post_likedby set Status = 'Y' where EmployeeID IS NOT NULL")->execute();
                     }
 
                 }

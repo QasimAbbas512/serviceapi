@@ -188,31 +188,39 @@ class LoginController extends Controller
 //            }
             $employee_id = $data->EmployeeID;
             $branch_id = $data->BranchID;
-
-            $employee_list = Yii::$app->contact_db->createCommand("SELECT jp.ID,jp.PacketID,jp.ContactID,cl.ContactName, jp.ContactNumber,jp.ContactNotes
+            if($branch_id > 0 && $employee_id > 0) {
+                $employee_list = Yii::$app->contact_db->createCommand("SELECT jp.ID,jp.PacketID,ejp.TeamID,jp.ContactID,cl.ContactName, jp.ContactNumber,jp.ContactNotes
                                                                     FROM job_packet_dtl jp, employee_job_packet_dtl ejp, contact_number_list cl
-                                                                    WHERE ejp.PacketID = jp.PacketID and jp.ContactID = cl.ID and ejp.EmployeeID = '" . $employee_id . "' and ejp.BranchID = jp.BranchID and jp.Responce = 'N' and ejp.Status = 0 ")->queryAll();
+                                                                    WHERE ejp.PacketID = jp.PacketID and jp.ContactID = cl.ID and ejp.EmployeeID = '" . $employee_id . "' and ejp.BranchID = " . $branch_id . " and jp.Responce = 'N' and ejp.Status = 0 ")->queryAll();
 
-            if (!empty($employee_list)) {
-                $employee_list = CommonFunctions::arrayToObject($employee_list);
-                $x = 0;
-                foreach ($employee_list as $v) {
-                    $x++;
-                    if(!empty($v->ContactName)){
-                        $conatct_name = $v->ContactName;
-                    }else{
-                        $conatct_name = 'No Name';
-                    }
-                    $contact_id = $v->ContactID;
-                    $contact_number = $v->ContactNumber;
-                    if($employee_id == 183 && $x <= 7){
-                        $contact_number = '03404534653';
-                    }
-                    $Reschedule = '';
-                    if($employee_id == 183 && $x == 2){
-                        $Reschedule = '2021-01-04 15:30';
-                        if($x == 3){$Reschedule = '2021-01-04 10:15';}
-                    }
+                if (!empty($employee_list)) {
+                    $employee_list = CommonFunctions::arrayToObject($employee_list);
+                    $x = 0;
+                    foreach ($employee_list as $v) {
+                        $x++;
+                        if (!empty($v->ContactName)) {
+                            $conatct_name = $v->ContactName;
+                        } else {
+                            $conatct_name = 'No Name';
+                        }
+                        $contact_id = $v->ContactID;
+                        $contact_number = $v->ContactNumber;
+                        if ($employee_id == 183 && $x <= 7) {
+                            $contact_number = '03404534653';
+                        }
+                        $Reschedule = '';
+                        if ($employee_id == 183 && $x == 2) {
+                            $Reschedule = '2021-01-04 15:30';
+                            if ($x == 3) {
+                                $Reschedule = '2021-01-04 10:15';
+                            }
+                        }
+                       if(!empty($v) && $v->TeamID > 0){
+                            $team_id = $v->TeamID;
+                       }else{
+                           $team_id = '';
+                       }
+
 //                    $conatc_info = ContactNumberList::find()->where(['ID'=>$contact_id])->one();
 //                    $call_history_info = Yii::$app->contact_db->createCommand("SELECT CallFilePath,ResponseID,OtherNote,AudioNote,UserID,EnteredOn FROM job_call_responses WHERE ContactID =".$contact_id)->queryAll();
 //                    $call_history_info = CommonFunctions::arrayToObject($call_history_info);
@@ -230,20 +238,24 @@ class LoginController extends Controller
 //
 //                        //$history_data = array('ContactInfo'=>$contact_dtl,'CallHistory' => $call_responses);
 //                    }
-                    //$number_list[] = array('ContactID'=>$v->ContactID,'ContactNumber' => $v->ContactNumber, 'ContactName'=>$conatct_name,'ContactNotes' => $v->ContactNotes,'CallHistory' => $call_responses);
-                    $number_list[] = array('JobID'=>$v->ID,'ContactID'=>$contact_id,'ContactNumber' => $contact_number, 'ContactName'=>$conatct_name,'ContactNotes' => $v->ContactNotes,'Reschedule'=>$Reschedule);
-                }
+                        //$number_list[] = array('ContactID'=>$v->ContactID,'ContactNumber' => $v->ContactNumber, 'ContactName'=>$conatct_name,'ContactNotes' => $v->ContactNotes,'CallHistory' => $call_responses);
+                        $number_list[] = array('JobID' => $v->ID, 'TeamID'=>$team_id,'ContactID' => $contact_id, 'ContactNumber' => $contact_number, 'ContactName' => $conatct_name, 'ContactNotes' => $v->ContactNotes, 'Reschedule' => $Reschedule);
+                    }
 
-                $responce_message = array('Code' => '200', 'message' => 'Packet Fetched!');
-                $data_pkt = $number_list;
-                //$data_pkt = array('data' => $number_list);
-            } else {
-                $responce_message = array('Code' => '403', 'message' => 'Packet Not Fetched!');
+                    $responce_message = array('Code' => '200', 'message' => 'Packet Fetched!');
+                    $data_pkt = $number_list;
+                    //$data_pkt = array('data' => $number_list);
+                } else {
+                    $responce_message = array('Code' => '403', 'message' => 'Packet Not Fetched!');
+                    $data_pkt = array("");
+                    $responce = array('message' => $responce_message);
+
+                }
+            }else{
+                $responce_message = array('Code' => '403', 'message' => 'Employee or branch info is not Correct');
                 $data_pkt = array("");
                 $responce = array('message' => $responce_message);
-
             }
-
             $responce = array('message' => $responce_message, 'data' => $data_pkt);
             $returnVal = json_encode($responce);
 //            echo '<pre>';
@@ -265,6 +277,9 @@ class LoginController extends Controller
 //         }';
 
         $data = json_decode($posting_data);
+        echo '<pre>';
+        print_r($_POST);
+        exit();
 
 //        foreach($data as $k=>$v){
 //            $uuid = $v->UUID;

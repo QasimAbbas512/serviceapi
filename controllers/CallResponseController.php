@@ -115,7 +115,7 @@ class CallResponseController extends Controller
                         $call_request_branch = $user_info->BranchID;
                         $employee_id = $user_info->EmpID;
                         $JobID = $val->JobID;
-
+                        $team_id = $val->TeamID;
                         $ContactID = $val->ContactID;
 
                         if(!empty($val->Skip)){
@@ -149,6 +149,7 @@ class CallResponseController extends Controller
                         $model->ResponseID = $ResponseValues;
                         $model->UserID = $UserID;
                         $model->EmployeeID = $employee_id;
+                        $model->TeamID = $team_id;
                         $model->CallFilePath = $VoiceCall;
                         $model->OtherNote = $OtherNotes;
                         $model->PacketDtlID = $JobID;
