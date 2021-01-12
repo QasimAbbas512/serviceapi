@@ -15,6 +15,7 @@ use Yii;
  * @property string $PostID
  * @property string $Active
  * @property string $EnteredOn
+ * @property string $PostDate
  * @property int $EnteredBy
  * @property string $IsDeleted
  * @property int|null $DeletedBy
@@ -48,9 +49,9 @@ class MediaLinkPosts extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['MediaID', 'LinkID', 'PostID', 'EnteredOn', 'EnteredBy', 'BranchID'], 'required'],
+            [['MediaID', 'LinkID', 'PostID', 'PostDate', 'EnteredOn', 'EnteredBy', 'BranchID'], 'required'],
             [['MediaID', 'LinkID', 'EnteredBy', 'DeletedBy', 'BranchID'], 'integer'],
-            [['EnteredOn', 'DeletedOn'], 'safe'],
+            [['EnteredOn', 'PostDate', 'DeletedOn'], 'safe'],
             [['PostType'], 'string', 'max' => 5],
             [['PostURL'], 'string', 'max' => 150],
             [['PostID'], 'string', 'max' => 100],

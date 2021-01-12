@@ -118,7 +118,8 @@ class MediaPostRankingController extends \yii\web\Controller
                                 $mdl_2->MediaID = $media_id;
                                 $mdl_2->PostID = $post_id;
                                 $mdl_2->LinkID = $page_row_id;
-                                $mdl_2->EnteredOn = date('Y-m-d H:i:s');
+                                $mdl_2->PostDate = date('Y-m-d');
+                                $mdl_2->EnteredOn = $created_time;
                                 $mdl_2->BranchID = $branch_id;
                                 $mdl_2->EnteredBy = 2;
                                 if($mdl_2->save()){
