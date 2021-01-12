@@ -55,6 +55,7 @@ class MediaLinkPosts extends \yii\db\ActiveRecord
             [['PostURL'], 'string', 'max' => 150],
             [['PostID'], 'string', 'max' => 100],
             [['Active', 'IsDeleted'], 'string', 'max' => 1],
+            [['MediaID', 'LinkID', 'PostID'], 'unique', 'targetAttribute' => ['MediaID', 'LinkID', 'PostID']],
             [['LinkID'], 'exist', 'skipOnError' => true, 'targetClass' => MediaLinks::className(), 'targetAttribute' => ['LinkID' => 'ID']],
             [['MediaID'], 'exist', 'skipOnError' => true, 'targetClass' => SocialMedias::className(), 'targetAttribute' => ['MediaID' => 'ID']],
         ];

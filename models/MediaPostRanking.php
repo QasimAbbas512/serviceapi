@@ -11,6 +11,7 @@ use Yii;
  * @property int $MediaPageID
  * @property int $MediaID
  * @property string $PostID
+ * @property int|null $PostMasterID
  * @property string $CreatedOn
  * @property int $TotalLikes
  * @property int $TotalShare
@@ -52,7 +53,7 @@ class MediaPostRanking extends \yii\db\ActiveRecord
     {
         return [
             [['MediaPageID', 'MediaID', 'PostID', 'CreatedOn', 'TotalLikes', 'TotalShare', 'CountDate', 'EnteredOn', 'EnteredBy', 'BranchID'], 'required'],
-            [['MediaPageID', 'MediaID', 'TotalLikes', 'TotalShare', 'EnteredBy', 'DeletedBy', 'BranchID'], 'integer'],
+            [['MediaPageID', 'MediaID', 'PostMasterID', 'TotalLikes', 'TotalShare', 'EnteredBy', 'DeletedBy', 'BranchID'], 'integer'],
             [['CreatedOn', 'CountDate', 'EnteredOn', 'DeletedOn'], 'safe'],
             [['PostMessage'], 'string'],
             [['PostID'], 'string', 'max' => 50],
@@ -73,6 +74,7 @@ class MediaPostRanking extends \yii\db\ActiveRecord
             'MediaPageID' => 'Media Page ID',
             'MediaID' => 'Media ID',
             'PostID' => 'Post ID',
+            'PostMasterID' => 'Post Master ID',
             'CreatedOn' => 'Created On',
             'TotalLikes' => 'Total Likes',
             'TotalShare' => 'Total Share',
