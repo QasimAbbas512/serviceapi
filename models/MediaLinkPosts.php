@@ -48,7 +48,7 @@ class MediaLinkPosts extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['MediaID', 'LinkID', 'PostType', 'PostURL', 'PostID', 'EnteredOn', 'EnteredBy', 'BranchID'], 'required'],
+            [['MediaID', 'LinkID', 'PostID', 'EnteredOn', 'EnteredBy', 'BranchID'], 'required'],
             [['MediaID', 'LinkID', 'EnteredBy', 'DeletedBy', 'BranchID'], 'integer'],
             [['EnteredOn', 'DeletedOn'], 'safe'],
             [['PostType'], 'string', 'max' => 5],

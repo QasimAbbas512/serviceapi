@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\MediaLinkPosts;
 use app\models\MediaPageRanking;
 use app\models\MediaPostLikedby;
 use app\models\NodeRequestedDate;
@@ -28,13 +29,13 @@ class MediaPostRankingController extends \yii\web\Controller
 
     public function actionRanking()
     {
-
-        $get_links = MediaLinks::find()->where('MediaID =1 and Active = "Y" and BranchID = 2')->all();// MediaID =1 is facebook
+        $media_id = 1;
+        $get_links = MediaLinks::find()->where('MediaID ='.$media_id.' and Active = "Y" and BranchID = 2')->all();// MediaID =1 is facebook
         if (!empty($get_links)) {
             $likes = 0;
             foreach($get_links as $s_vals) {
                 $page_row_id = $s_vals->ID;
-
+                $branch_id = $s_vals->BranchID;
                     $get_tokens = PagesCredentials::find()->where(['PageID' => $page_row_id])->one();
 
                     if (!empty($get_tokens)) {
@@ -100,15 +101,37 @@ class MediaPostRankingController extends \yii\web\Controller
                             $mdl->TotalShare = $shares;
 //                        $mdl->PostMessage = $message;
                             $mdl->CountDate = $date;
-                            $mdl->MediaID = 1;
+                            $mdl->MediaID = $media_id;
                             $mdl->MediaPageID = $page_row_id;
                             $mdl->TotalLikes = $likes;
                             $mdl->Active = 'Y';
                             $mdl->EnteredOn = date('Y-m-d H:i:s');
                             $mdl->EnteredBy = 2;
-                            $mdl->BranchID = 2;
+                            $mdl->BranchID = $branch_id;
                             $mdl->IsDeleted = 'N';
 
+                            $post_info = MediaLinkPosts::find()->where(['PostID'=>$post_id])->andWhere(['LinkID' => $page_row_id])->andWhere(['BranchID' => $branch_id])->one();
+                            if (!empty($post_info)) {
+                                $MasterPostId = $post_info->ID;
+                            }else{
+                                $mdl_2 = new MediaLinkPosts();
+                                $mdl_2->MediaID = $media_id;
+                                $mdl_2->PostID = $post_id;
+                                $mdl_2->LinkID = $page_row_id;
+                                $mdl_2->EnteredOn = date('Y-m-d H:i:s');
+                                $mdl_2->BranchID = $branch_id;
+                                $mdl_2->EnteredBy = 2;
+                                if($mdl_2->save()){
+                                    $MasterPostId = $mdl_2->ID;
+                                }else{
+                                    print_r($mdl_2->getErrors());
+                                }
+
+                            }
+
+
+
+                            $mdl->PostMasterID = $MasterPostId;
                             $validation = MediaPostRanking::find()->where(['PostID' => $post_id])->andWhere(['MediaPageID' => $page_row_id])->andWhere(['CountDate' => $date])->one();
                             if (!empty($validation)) {
                                 continue;
