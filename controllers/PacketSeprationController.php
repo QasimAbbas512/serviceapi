@@ -49,24 +49,27 @@ class PacketSeprationController extends Controller
             $branch_id = $data_pkt->BranchID;
             $date = $data_pkt->DateTime;
             $call_data = json_decode($data_pkt->Data);
-
+//                echo '<pre>';
+//                print_r($call_data);
+//                exit();
             foreach ($call_data as $v) {
                 $call_pkt = json_encode($v);
                 $call_uuid = $v->UUID;
                 $destination = 'call_response';
-
-                $sendToNode = CommonFunctions::SaveNodes($destination,$call_pkt,$call_uuid);
-                if($sendToNode == 2){continue;}
+                //echo $v->ContactID.'<br>';
+                //$sendToNode = CommonFunctions::SaveNodes($destination,$call_pkt,$call_uuid);
+                //if($sendToNode == 2){continue;}
 
 //
                 }
 
-            $sql = 'update node_requested_date set Picked = 1 and status = 1 and Completed = 1 and Tried = 1 where ID ='.$id;
-                Yii::$app->machine_db->createCommand($sql)->execute();
+//            $sql = 'update node_requested_date set Picked = 1 and status = 1 and Completed = 1 and Tried = 1 where ID ='.$id;
+//                Yii::$app->machine_db->createCommand($sql)->execute();
 
-                echo "Done";
-                exit();
+
             }
+        echo "Done";
+        exit();
         }
 
 //            echo "<pre>";

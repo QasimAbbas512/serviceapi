@@ -277,9 +277,9 @@ class LoginController extends Controller
 //         }';
 
         $data = json_decode($posting_data);
-        echo '<pre>';
-        print_r($_POST);
-        exit();
+//        echo '<pre>';
+//        print_r($_POST);
+//        exit();
 
 //        foreach($data as $k=>$v){
 //            $uuid = $v->UUID;
