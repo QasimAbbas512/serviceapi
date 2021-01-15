@@ -34,7 +34,7 @@ class PacketSeprationController extends Controller
     {
         $GetNodeRequestLimit = AppConstants::getNodeRequestLimit;
 
-        $sql = 'update node_requested_date set Picked = 1 where status = 0 and Completed = 0 and Picked = 0 limit ' . $GetNodeRequestLimit;
+        $sql = 'update node_requested_date set Picked = 1 where status = 0 and Completed = 0 and Picked = 0 and RequestDestination = "call_response_multiple" limit ' . $GetNodeRequestLimit;
         Yii::$app->machine_db->createCommand($sql)->execute();
 
 
@@ -98,8 +98,6 @@ class PacketSeprationController extends Controller
                         }
                     }
 
-                    echo $z . "Done";
-                    exit();
                 }
 
 //            echo "<pre>";
@@ -107,14 +105,19 @@ class PacketSeprationController extends Controller
 //            exit();
 
                 $transaction->commit();
+
+                $update_status = 'update node_requested_date set Status = 1, Completed = 1, PickedTime = "' . $PickedTime . '", CompletedTime = "' . $CompletedTime . '", Tried = "' . $Tried . '"  where ID = "' . $id . '"';
+                Yii::$app->machine_db->createCommand($update_status)->execute();
+
             } catch
             (Exception $e) {
                 $transaction->rollback();
             }
 
+            echo $z . "Done";
+            exit();
+
         }
 
-        $update_status = 'update node_requested_date set Status = 1, Completed = 1, PickedTime = "' . $PickedTime . '", CompletedTime = "' . $CompletedTime . '", Tried = "' . $Tried . '"  where ID = "' . $id . '"';
-        Yii::$app->machine_db->createCommand($update_status)->execute();
     }
 }
