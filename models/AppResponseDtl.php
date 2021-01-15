@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use CommonFunctions;
 
 /**
  * This is the model class for table "app_response_dtl".
@@ -34,6 +35,10 @@ class AppResponseDtl extends \yii\db\ActiveRecord
         return 'app_response_dtl';
     }
 
+    public function afterSave($insert, $changedAttributes){
+
+        CommonFunctions::SelectUserTypeDtl($this->ResponseHeadID,$this->BranchID,1);
+    }
     /**
      * {@inheritdoc}
      */

@@ -75,10 +75,10 @@ class LoginController extends Controller
 
     public function actionVerify()
     {
-//        $api_data_streem = file_get_contents("php://input");
-        $api_data_streem = '{  "username":"laiba@aaa.com",
-                                 "pass":"laiba123",
-                                 "EMEI":"E34534dfgd"}';
+        $api_data_streem = file_get_contents("php://input");
+//        $api_data_streem = '{  "username":"laiba@aaa.com",
+//                                 "pass":"laiba123",
+//                                 "EMEI":"E34534dfgd"}';
         $data = json_decode($api_data_streem);
 
         if (!empty($data)) {
@@ -114,14 +114,8 @@ class LoginController extends Controller
                         $user_type_rec = AppResponse::find()->where(['AppUserType' => $user_device_record->UserType])->andWhere(['BranchID'=>$user_device_record->BranchID])->andWhere(AppConstants::get_active_record_only)->all();
                         if(!empty($user_type_rec)){
                             foreach($user_type_rec as $v) {
-                                $rsp_head_id = $v->ID;
-                                $brnch_id = $user_device_record->BranchID;
-                                $user_type_detail = CommonFunctions::SelectUserTypeDtl($rsp_head_id,$brnch_id);
-
-                                echo "<pre>";
-                                print_r($user_type_detail);
-                                exit();
-
+                                //$user_type_detail = AppResponseDtl::find()->where(['ResponseHeadID' => $v->ID])->andWhere(['BranchID' => $user_device_record->BranchID])->andWhere('ID != '.AppConstants::SkipValue)->andWhere(AppConstants::get_active_record_only)->all();
+                                $user_type_detail = CommonFunctions::SelectUserTypeDtl($v->ID,$user_device_record->BranchID);
                                 if (!empty($user_type_detail)) {
                                     unset($val_arr);
                                     foreach ($user_type_detail as $val) {

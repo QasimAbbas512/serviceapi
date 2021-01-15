@@ -82,7 +82,7 @@ class PacketSeprationController extends Controller
 
                             $sendToNode = CommonFunctions::SaveNodes($destination, $call_pkt, $call_uuid);
 
-                                $CompletedTime = date('Y-m-d H:i:s');
+
                                 $Tried = 1;
 
                             if ($sendToNode == 2) {
@@ -105,7 +105,7 @@ class PacketSeprationController extends Controller
 //            exit();
 
                 $transaction->commit();
-
+                $CompletedTime = date('Y-m-d H:i:s');
                 $update_status = 'update node_requested_date set Status = 1, Completed = 1, PickedTime = "' . $PickedTime . '", CompletedTime = "' . $CompletedTime . '", Tried = "' . $Tried . '"  where ID = "' . $id . '"';
                 Yii::$app->machine_db->createCommand($update_status)->execute();
 
