@@ -52,14 +52,14 @@ class PacketSeprationController extends Controller
 //                echo '<pre>';
 //                print_r($data_pkt);
 //                exit();
-
+                $z=0;
                 foreach ($data_pkt as $v) {
                     $call_pkt = json_encode($v);
                     $call_uuid = $v->UUID;
                     $destination = 'call_response';
-                    //echo $v->ContactID.'<br>';
-                    //$sendToNode = CommonFunctions::SaveNodes($destination,$call_pkt,$call_uuid);
-                    //if($sendToNode == 2){continue;}
+                    echo $v->ContactID.'<br>';
+                    $sendToNode = CommonFunctions::SaveNodes($destination,$call_pkt,$call_uuid);
+                    if($sendToNode == 2){$z++; continue;}
 
 //
                 }
@@ -68,7 +68,7 @@ class PacketSeprationController extends Controller
 //                Yii::$app->machine_db->createCommand($sql)->execute();
             
             }
-        echo "Done";
+        echo $z."Done";
         exit();
         }
 
