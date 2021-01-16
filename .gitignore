@@ -3,6 +3,7 @@
 /runtime
 /web/emp_images
 /web/logo_image
+/web/files
 
 # phpstorm project files
 .idea
