@@ -58,8 +58,22 @@ class ServiceController extends Controller
         $TeamID = $data->TeamID;
         $JobID = $data->JobID;
         $SentDate = $data->SentDate;
+        // echo 't'.$token;
+        // echo '<BR>';
+        // echo 'u'.$UUID;
+        // echo '<BR>';
+        // echo 'e'.$EmpID;
+        // echo '<BR>';
+        // echo 'ui'.$UserID;
+        // echo '<BR>';
+        // echo 't'.$TeamID;
+        // echo '<BR>';
+        // echo 'j'.$JobID;
+        // echo '<BR>';
+        // echo 's'.$SentDate;
+        // exit();
 
-        $target_path = 'files/';//AppConstants::AudioNote."/";
+        $target_path = 'files/../../../aaacms/web/audio_notes/';//AppConstants::AudioNote."/";
 
         $responce_message  = array();
         $server_ip = gethostbyname(gethostname());
