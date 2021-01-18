@@ -4,6 +4,7 @@
 /web/emp_images
 /web/logo_image
 /web/files
+/web/audio_note
 
 # phpstorm project files
 .idea
