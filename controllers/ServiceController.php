@@ -36,67 +36,6 @@ class ServiceController extends Controller
     }
 
 
-
-    public function actionUpload()
-    {
-
-        $target_path = "files/";//"uploads/";
-
-// array for final json respone
-        $response = array();
-
-// getting server ip address
-        $server_ip = gethostbyname(gethostname());
-
-// final file url that is being uploaded
-        //$file_upload_url = 'http://' . $server_ip . '/' . 'AndroidFileUpload' . '/' . $target_path;
-        $file_upload_url = Yii::$app->request->baseUrl.'/files/';
-
-        if (isset($_FILES['image']['name'])) {
-            $target_path = $target_path . basename($_FILES['image']['name']);
-            $files = UploadedFile::getInstancesByName($_FILES['image']['name']);
-            $x = '0';
-            // reading other post parameters
-            $email = isset($_POST['email']) ? $_POST['email'] : '';
-            $website = isset($_POST['website']) ? $_POST['website'] : '';
-
-            $response['file_name'] = basename($_FILES['image']['name']);
-
-            try {
-                // Throws exception incase file is not being moved
-                if (!move_uploaded_file($_FILES['image']['tmp_name'], $target_path)) {
-                    // make error flag true
-                    $response['error'] = true;
-                    $response['message'] = 'Could not move the file!';
-                }
-
-                // File successfully uploaded
-                $response['message'] = 'File uploaded successfully!';
-                $response['error'] = false;
-                $response['file_path'] = $file_upload_url . basename($_FILES['image']['name']);
-            } catch (Exception $e) {
-                // Exception occurred. Make error flag true
-                $response['error'] = true;
-                $response['message'] = $e->getMessage();
-            }
-        } else {
-            // File parameter is missing
-            $response['error'] = true;
-            $response['message'] = 'Not received any file!F';
-        }
-
-// Echo final json response to client
-        echo '<pre>';
-        print_r($response);
-        exit();
-        echo json_encode($response);
-
-    }
-
-    /**
-     * Lists all Employees models.
-     * @return mixed
-     */
     public function beforeAction($action)
     {
         if ($action->id == 'response-options' || $action->id == 'post-dialer-response' || $action->id == 'change-pin' || $action->id == 'dialer-response-multiple' || $action->id == 'upload') {
@@ -104,6 +43,51 @@ class ServiceController extends Controller
         }
 
         return parent::beforeAction($action);
+    }
+
+
+    public function actionUpload()
+    {
+
+        $api_data_streem = $_POST['call_data'];
+        $data = json_decode($api_data_streem);
+        $token = $data->Token;
+        $UUID = $data->UUID;
+        $EmpID = $data->EmpID;
+        $UserID = $data->UserID;
+        $TeamID = $data->TeamID;
+        $JobID = $data->JobID;
+        $SentDate = $data->SentDate;
+
+        $target_path = 'files/';//AppConstants::AudioNote."/";
+
+        $responce_message  = array();
+        $server_ip = gethostbyname(gethostname());
+
+        //$file_upload_url = Yii::$app->request->baseUrl.'/files/';
+        //$target_path = Yii::$app->request->baseUrl.'/files/';
+
+        if (isset($_FILES['image']['name']) && $JobID > 0 && $token == AppConstants::android_audio_upload_token) {
+            $target_path = $target_path . basename($_FILES['image']['name']);
+            try {
+                // Throws exception incase file is not being moved
+                if (!move_uploaded_file($_FILES['image']['tmp_name'], $target_path)) {
+                    $responce_message = array('Code' => '403', 'message' => 'Could not move the file!');
+                }else {
+                    // File successfully uploaded
+                    $file_name = basename($_FILES['image']['name']);
+                    $responce_message = array('Code' => '200', 'message' => 'File uploaded successfully!', 'file_name' => $file_name);
+                }
+            } catch (Exception $e) {
+                // Exception occurred. Make error flag true
+                $responce_message = array('Code' => '403', 'message' => $e->getMessage());
+            }
+        } else {
+            // File parameter is missing
+            $responce_message = array('Code' => '403', 'message' => 'Some thing wrong with parameters.');
+        }
+
+        return json_encode($responce_message);
     }
 
     /**
