@@ -101,41 +101,48 @@ class CallResponseController extends Controller
 //                    exit();
                     //foreach ($data as $key => $val) {
 
-                        $UUID = $val->UUID;
-                        $chk = JobCallResponses::find()->where(['UUID'=>$UUID])->one();
-                        if(empty($chk)){
-                            $job_message = 'UUID Already Added';
-//                            $update_msg = 'update node_requested_date set status = 1, Completed = 1,  job_message = "'.$job_message.'"  where ID = "' . $row_id . '"';
-//                            Yii::$app->machine_db->createCommand($update_msg)->execute();
-                            //continue;
-                        }
-                        $macAddress = $val->MacAddress;
-                        $UserID = $val->UserID;
+                    $UUID = $val->UUID;
+                    $macAddress = $val->MacAddress;
+                    $UserID = $val->UserID;
+                    $JobID = $val->JobID;
+                    $team_id = $val->TeamID;
+                    $ContactID = $val->ContactID;
+
+                    //$chk = JobCallResponses::find()->where(['UUID'=>$UUID])->andWhere(['PacketDtlID'=>$JobID])->andWhere(['TeamID'=>$team_id])->one();
+
+                    $chk = Yii::$app->contact_db->createCommand("select ID from job_call_responses where PacketDtlID =" . $JobID . " and TeamID=" . $team_id . " and UUID='" . $UUID . "'")->queryOne();
+//                        echo '<pre>';
+//                        echo count($chk);
+//                        print_r($chk);
+//                        exit();
+
+                    if (empty($chk) || count($chk) == 0) {
+
+                        //continue;
+
                         $user_info = CommonFunctions::UserInfo($UserID);
                         $call_request_branch = $user_info->BranchID;
                         $employee_id = $user_info->EmpID;
-                        $JobID = $val->JobID;
-                        $team_id = $val->TeamID;
-                        $ContactID = $val->ContactID;
 
-                        if(!empty($val->Skip)){
+
+                        if (!empty($val->Skip)) {
                             $ResponseValues = AppConstants::SkipValue;
                             $OtherNotes = $val->Skip;
-                        }else {
+                        } else {
                             $ResponseValues = $val->ResponseValues;
                             $OtherNotes = $val->OtherNotes;
                         }
 
                         $ProfileInfo = $val->ProfileInfo;
-                        if(!empty($val->VoiceCall)) {
+                        if (!empty($val->VoiceCall)) {
                             $VoiceCall = $val->VoiceCall;
-                        }else{
+                        } else {
                             $VoiceCall = 'NoCall';
                         }
 
-                        if(!empty($val->AudioNotes)) {
+                        if (!empty($val->AudioNotes)) {
                             $AudioNote = $val->AudioNotes;
-                        }else{
+                        } else {
                             $AudioNote = 'NoVoiceNote';
                         }
                         //$AudioNote = $val->{'AudioNotes'};
@@ -154,8 +161,10 @@ class CallResponseController extends Controller
                         $model->OtherNote = $OtherNotes;
                         $model->PacketDtlID = $JobID;
 
-                        $packet_record = CommonFunctions::JobPacketDtlInfo($JobID, $call_request_branch);//JobPacketDtl::find()->where(['ID' => $JobID])->one();
+                        $packet_record = CommonFunctions::JobPacketDtlInfo($JobID, $call_request_branch, 1);//JobPacketDtl::find()->where(['ID' => $JobID])->one();
                         $packet_data = $packet_record->PacketID;
+
+                        $packets_arr[] = $packet_data;
 
                         $model->JobPacketID = $packet_data;
                         $model->AudioNote = $AudioNote;//$voice_note_audio_files;
@@ -167,32 +176,51 @@ class CallResponseController extends Controller
                         $model->BranchID = $call_request_branch;
                         $model->EnteredOn = date('Y-m-d H:i:s');
                         $model->EnteredBy = 1;
-                        $transaction2 = Yii::$app->contact_db->beginTransaction();
-                        try {
-                            if ($model->save()) {
-                                $CompletedTime = date('Y-m-d H:i:s');
-                                $Tried = 1;
-                                $job_message = 'Executed Successfully';
-                                $update_status = 'update node_requested_date set Picked = 1, status = 1, Completed = 1, PickedTime = "' . $PickedTime . '", CompletedTime = "' . $CompletedTime . '", job_message = "'.$job_message.'", Tried = "' . $Tried . '"  where ID = "' . $row_id . '"';
-                                Yii::$app->machine_db->createCommand($update_status)->execute();
-                                Yii::$app->contact_db->createCommand('update job_packet_dtl set Responce = "Y" where ID ='.$JobID)->execute();
 
-                                $transaction2->commit();
-                            } else {print_r($model->getErrors());exit();}
+                        //$transaction2 = Yii::$app->contact_db->beginTransaction();
+                        //try {
+                        if ($model->save()) {
+                            $CompletedTime = date('Y-m-d H:i:s');
+                            $Tried = 1;
+                            $job_message = 'Executed Successfully';
+                            $update_status = 'update node_requested_date set Picked = 1, status = 1, Completed = 1, PickedTime = "' . $PickedTime . '", CompletedTime = "' . $CompletedTime . '", job_message = "' . $job_message . '", Tried = "' . $Tried . '"  where ID = "' . $row_id . '"';
+                            Yii::$app->machine_db->createCommand($update_status)->execute();
+                            Yii::$app->contact_db->createCommand('update job_packet_dtl set Responce = "Y" where ID =' . $JobID)->execute();
 
-
-                        } catch (Exception $e) {
-                            $transaction2->rollback();
+                            //$transaction2->commit();
+                        } else {
+                            print_r($model->getErrors());
+                            exit();
                         }
-                    //}
+
+
+//                        } catch (Exception $e) {
+//                            $transaction2->rollback();
+//                        }
+                    } else {
+                        $job_message = 'UUID Already Added';
+                        $CompletedTime = date('Y-m-d H:i:s');
+                        $update_msg = 'update node_requested_date set status = 1, Completed = 1,  PickedTime = "' . $PickedTime . '", CompletedTime = "' . $CompletedTime . '", job_message = "' . $job_message . '"  where ID = "' . $row_id . '" and UUID = "' . $UUID . '"';
+                        Yii::$app->machine_db->createCommand($update_msg)->execute();
+                    }
+
+
                 }
-
                 $transaction->commit();
-
             } catch (Exception $e) {
                 $transaction->rollback();
             }
+
+
+            $pkt_ids = implode(',', $packets_arr);
+            if(!empty($pkt_ids)){
+
+                Yii::$app->contact_db->createCommand("update employee_job_packet_dtl jd set jd.CalledNo = (select COUNT(b.ID) from job_packet_dtl b where jd.PacketID = b.PacketID and b.Responce = 'Y') WHERE jd.PacketID in ($pkt_ids)")->execute();
+            }
+            //echo '--' . $pkt_ids;
+
             echo 'Job Done';
+
             exit();
         } else {
             echo 'No Data Found';
