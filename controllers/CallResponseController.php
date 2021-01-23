@@ -216,6 +216,7 @@ class CallResponseController extends Controller
             if(!empty($pkt_ids)){
 
                 Yii::$app->contact_db->createCommand("update employee_job_packet_dtl jd set jd.CalledNo = (select COUNT(b.ID) from job_packet_dtl b where jd.PacketID = b.PacketID and b.Responce = 'Y') WHERE jd.PacketID in ($pkt_ids)")->execute();
+                Yii::$app->contact_db->createCommand("update employee_job_packet_dtl jd set Status = 1 WHERE PacketCount = CalledNo and PacketID in ($pkt_ids)")->execute();
             }
             //echo '--' . $pkt_ids;
 

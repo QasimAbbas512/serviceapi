@@ -25,6 +25,7 @@ use Yii;
  * @property string|null $DeletedOn
  * @property int|null $DeletedBy
  * @property int $BranchID
+ * @property string $Record_Type
  *
  * @property JobCallResponses[] $jobCallResponses
  * @property JobPacketDtl[] $jobPacketDtls
@@ -60,7 +61,7 @@ class ContactNumberList extends \yii\db\ActiveRecord
             [['ContactName', 'Area'], 'string', 'max' => 30],
             [['ContactNumber', 'ServiceProvider', 'ContactCityID'], 'string', 'max' => 20],
             [['ContactAddress'], 'string', 'max' => 255],
-            [['Active', 'IsDeleted'], 'string', 'max' => 1],
+            [['Active', 'IsDeleted', 'Record_Type'], 'string', 'max' => 1],
         ];
     }
 

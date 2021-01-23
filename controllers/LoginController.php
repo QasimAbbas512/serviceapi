@@ -205,16 +205,16 @@ class LoginController extends Controller
                         }
                         $contact_id = $v->ContactID;
                         $contact_number = $v->ContactNumber;
-                        if ($employee_id == 183 && $x <= 7) {
+                        if ($employee_id == 183 && $x <= 50) {
                             $contact_number = '03404534653';
                         }
                         $Reschedule = '';
-                        if ($employee_id == 183 && $x == 2) {
-                            $Reschedule = '2021-01-04 15:30';
-                            if ($x == 3) {
-                                $Reschedule = '2021-01-04 10:15';
-                            }
-                        }
+//                        if ($employee_id == 183 && $x == 2) {
+//                            $Reschedule = '2021-01-04 15:30';
+//                            if ($x == 3) {
+//                                $Reschedule = '2021-01-04 10:15';
+//                            }
+//                        }
                        if(!empty($v) && $v->TeamID > 0){
                             $team_id = $v->TeamID;
                        }else{

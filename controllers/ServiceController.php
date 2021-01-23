@@ -101,7 +101,7 @@ class ServiceController extends Controller
 
         if ($id == 0) {
             // $api_data_streem = file_get_contents("php://input");
-            $api_data_streem = '[{"UserType":"29","BranchID":"1"}]';
+            $api_data_streem = '[{"UserType":"29","BranchID":"2"}]';
 
             $data = json_decode($api_data_streem);
             foreach ($data as $v) {
