@@ -45,7 +45,7 @@ class CallResponseController extends Controller
 
     public function beforeAction($action)
     {
-        if ($action->id == 'call' || $action->id == 'postman') {
+        if ($action->id == 'call' || $action->id == 'postman' || $action->id == 'runlike') {
             $this->enableCsrfValidation = false;
         }
 
@@ -55,7 +55,38 @@ class CallResponseController extends Controller
     /**
      * cURL GET example
      */
+    public function actionRunlike(){
+        $GetNodeRequestLimit = AppConstants::getNodeRequestLimit;
 
+        $sql = 'update node_requested_date set Picked = 1 where status = 0 and Completed = 0 and Picked = 0 and RequestDestination = "add_likes" limit ' . $GetNodeRequestLimit;
+        Yii::$app->machine_db->createCommand($sql)->execute();
+
+        $call_record = NodeRequestedDate::find()->where('Status = 0 and Picked = 1 and Completed =0 and RequestDestination = "add_likes"')->all();
+        if (!empty($call_record)) {
+            foreach ($call_record as $value) {
+
+                $row_id = $value->ID;
+                $PickedTime = date('Y-m-d H:i:s');
+
+                $requested_data = $value->DataPacket;
+                $data = json_decode($requested_data);
+                $val = $data;
+                $empid = $val->empid;
+                $ToDate = $val->ToDate;
+                $FromDate = $val->FromDate;
+                $branchID = $val->branchID;
+                CommonFunctions::likedBy($empid,$ToDate,$FromDate,$branchID);
+                $CompletedTime = date('Y-m-d H:i:s');
+                $Tried = 1;
+                $job_message = 'Executed Successfully';
+                $update_status = 'update node_requested_date set Picked = 1, status = 1, Completed = 1, PickedTime = "' . $PickedTime . '", CompletedTime = "' . $CompletedTime . '", job_message = "' . $job_message . '", Tried = "' . $Tried . '"  where ID = "' . $row_id . '"';
+                Yii::$app->machine_db->createCommand($update_status)->execute();
+
+            }
+        }
+        echo 'Done';
+        exit();
+    }
     /**
      * Call from cron job to explore data sent by mobile and distribute into tables as per requirement / given data
      */
