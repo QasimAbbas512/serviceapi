@@ -334,4 +334,71 @@ class ServiceController extends Controller
         }
     }
 
+    //to send the call history of an employee
+    public function actionHistory()
+    {
+        $api_data_streem = file_get_contents("php://input");
+//        $api_data_streem = '{  "emp_id":"183",
+//                               "team_id":"10",
+//                                "start_date":"2021-01-01",
+//                                "end_date":"2021-01-25"}';
+
+        $data = json_decode($api_data_streem);
+
+        $date = date('Y-m-d');
+
+        if (!empty($data)) {
+
+            $emp_id = $data->emp_id;
+            $team_id = $data->team_id;
+            $start_date = $data->start_date;
+            $end_date = $data->end_date;
+
+            if (empty($start_date)) {
+                $start_date = $date;
+            }
+            if (empty($end_date)) {
+                $end_date = $date;
+            }
+            $where = '';
+            if (!empty($start_date) && !empty($end_date)) {
+                $where .= " and EnteredOn between '" . $start_date . "' and  '" . $end_date . "'";
+            }
+
+            $response_stats = Yii::$app->contact_db->createCommand("
+        SELECT DISTINCT ResponseID ,Count(ResponseID) as response 
+        FROM job_call_responses 
+        WHERE TeamID = " . $team_id . " AND EmployeeID = " . $emp_id . ". $where
+        GROUP BY ResponseID,TeamID
+                  ")->queryAll();
+
+            $response_stats = CommonFunctions::arrayToObject($response_stats);
+
+
+            if (!empty($response_stats)) {
+                //$val_arr = '';
+                $zp = 0;
+
+                foreach ($response_stats as $x) {
+                    $x++;
+                    $response_count = $x->response;
+                    $resp_id = $x->ResponseID;
+
+                    if (!empty($resp_id)) {
+                        $resp_name = CommonFunctions::printResponcseName($resp_id);
+                        $val_arr[$resp_name] = $response_count;
+                    }
+
+
+                }
+
+                $responce_message = array('Code' => '200', 'message' => 'Counts Found','Counts'=>$val_arr);
+            }else{
+                $responce_message = array('Code' => '403', 'message' => 'No Data Found.');
+            }
+
+            return json_encode($responce_message);
+
+        }
+    }
 }

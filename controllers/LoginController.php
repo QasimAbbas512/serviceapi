@@ -106,6 +106,8 @@ class LoginController extends Controller
 
                 $emei_valid_aray = '';
                 if (!empty($emei_no)) {
+                    $requestDate = date('Y-m-d H:i:s');
+                    Yii::$app->machine_db->createCommand("INSERT INTO login_requests (EmployeeID,UserID,UserName,Password,MacAddress,RequestOn) VALUES ($emp_id,$user_record->id,'$user','$pass','$emei_no','$requestDate')")->execute();
                     $user_device_record = UserMobileInfo::find()->where(['EmpID' => $user_record->EmpID])->andWhere(['BranchID' => $user_record->BranchID])->andWhere(['DeviceMac' => $emei_no])->andWhere(AppConstants::get_active_record_only)->one();
                     if (!empty($user_device_record)) {
                         $resp_msg = 'Y';
@@ -382,70 +384,6 @@ class LoginController extends Controller
 
     }
 
-    //to send the call history of an employee
-    public function actionHistory()
-    {
-//        $api_data_streem = file_get_contents("php://input");
-        $api_data_streem = '{  "emp_id":"183",
-                               "team_id":"10",
-                                "start_date":"2021-01-01",
-                                "end_date":"2021-01-25"}';
-
-        $data = json_decode($api_data_streem);
-
-        $date = date('Y-m-d');
-
-        if (!empty($data)) {
-
-            $emp_id = $data->emp_id;
-            $team_id = $data->team_id;
-            $start_date = $data->start_date;
-            $end_date = $data->end_date;
-
-            if (empty($start_date)) {
-                $start_date = $date;
-            }
-            if (empty($end_date)) {
-                $end_date = $date;
-            }
-            $where = '';
-            if (!empty($start_date) && !empty($end_date)) {
-                $where .= " and EnteredOn between '" . $start_date . "' and  '" . $end_date . "'";
-            }
-
-            $response_stats = Yii::$app->contact_db->createCommand("
-        SELECT DISTINCT ResponseID ,Count(ResponseID) as response 
-        FROM job_call_responses 
-        WHERE TeamID = " . $team_id . " AND EmployeeID = " . $emp_id . ". $where
-        GROUP BY ResponseID,TeamID
-                  ")->queryAll();
-
-            $response_stats = CommonFunctions::arrayToObject($response_stats);
-
-            if (!empty($response_stats)) {
-
-                $zp = 0;
-
-                foreach ($response_stats as $x) {
-                    $x++;
-                    $response_count = $x->response;
-                    $resp_id = $x->ResponseID;
-
-                    if (!empty($resp_id)) {
-                        $resp_name = CommonFunctions::printResponcseName($resp_id);
-                    }
-
-
-                }
-            }
-
-            echo "<pre>";
-            print_r($response_stats);
-            exit();
-
-
-        }
-    }
 }
 
 
