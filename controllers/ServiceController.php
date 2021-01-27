@@ -38,7 +38,7 @@ class ServiceController extends Controller
 
     public function beforeAction($action)
     {
-        if ($action->id == 'response-options' || $action->id == 'post-dialer-response' || $action->id == 'change-pin' || $action->id == 'dialer-response-multiple' || $action->id == 'upload') {
+        if ($action->id == 'response-options' || $action->id == 'history' || $action->id == 'post-dialer-response' || $action->id == 'change-pin' || $action->id == 'dialer-response-multiple' || $action->id == 'upload') {
             $this->enableCsrfValidation = false;
         }
 
