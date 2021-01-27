@@ -94,15 +94,15 @@ class LoginController extends Controller
             if (!empty($user_record)) {
                 $emp_id = $user_record->EmpID;
 
-                $employee_info = CommonFunctions::selectEmployeeInfo($emp_id,$user_record->BranchID);
+                $employee_info = CommonFunctions::selectEmployeeInfo($emp_id, $user_record->BranchID);
 
-                $emp_name = CommonFunctions::printEmployeeName($user_record->EmpID,$user_record->BranchID);
+                $emp_name = CommonFunctions::printEmployeeName($user_record->EmpID, $user_record->BranchID);
                 $emp_gender = CommonFunctions::printGender($employee_info->Gender);
-                $emp_dep = CommonFunctions::printDepartment($employee_info->DepartmentID,$user_record->BranchID);
-                $emp_desgination = CommonFunctions::printDesignation($employee_info->DesignationID,$user_record->BranchID);
+                $emp_dep = CommonFunctions::printDepartment($employee_info->DepartmentID, $user_record->BranchID);
+                $emp_desgination = CommonFunctions::printDesignation($employee_info->DesignationID, $user_record->BranchID);
                 $emp_branch = CommonFunctions::selectCompanyBranchInfo($user_record->BranchID);
                 $responce_message = array('Code' => '200', 'message' => 'Login Successful');
-               // $responce_data = array('UserID' => $user_record->id, 'BranchID' => $user_record->BranchID, 'EmployeeID' => $user_record->EmpID, 'EmpName' => $emp_name, 'DOB' => $employee_info->DateOfBirth, 'Gender' => $emp_gender, 'Designation' => $emp_desgination, 'Department' => $emp_dep, 'OfficeBranch' => $emp_branch->BranchName);
+                // $responce_data = array('UserID' => $user_record->id, 'BranchID' => $user_record->BranchID, 'EmployeeID' => $user_record->EmpID, 'EmpName' => $emp_name, 'DOB' => $employee_info->DateOfBirth, 'Gender' => $emp_gender, 'Designation' => $emp_desgination, 'Department' => $emp_dep, 'OfficeBranch' => $emp_branch->BranchName);
 
                 $emei_valid_aray = '';
                 if (!empty($emei_no)) {
@@ -111,11 +111,11 @@ class LoginController extends Controller
                         $resp_msg = 'Y';
                         $user_type = CommonFunctions::printListValue($user_device_record->UserType);
 
-                        $user_type_rec = AppResponse::find()->where(['AppUserType' => $user_device_record->UserType])->andWhere(['BranchID'=>$user_device_record->BranchID])->andWhere(AppConstants::get_active_record_only)->all();
-                        if(!empty($user_type_rec)){
-                            foreach($user_type_rec as $v) {
+                        $user_type_rec = AppResponse::find()->where(['AppUserType' => $user_device_record->UserType])->andWhere(['BranchID' => $user_device_record->BranchID])->andWhere(AppConstants::get_active_record_only)->all();
+                        if (!empty($user_type_rec)) {
+                            foreach ($user_type_rec as $v) {
                                 //$user_type_detail = AppResponseDtl::find()->where(['ResponseHeadID' => $v->ID])->andWhere(['BranchID' => $user_device_record->BranchID])->andWhere('ID != '.AppConstants::SkipValue)->andWhere(AppConstants::get_active_record_only)->all();
-                                $user_type_detail = CommonFunctions::SelectUserTypeDtl($v->ID,$user_device_record->BranchID);
+                                $user_type_detail = CommonFunctions::SelectUserTypeDtl($v->ID, $user_device_record->BranchID);
                                 if (!empty($user_type_detail)) {
                                     unset($val_arr);
                                     foreach ($user_type_detail as $val) {
@@ -130,11 +130,11 @@ class LoginController extends Controller
                             $resp_vals = $val_arr;
                         }
 
-                        $responce_data = array('UserType'=>$user_type,'UserID' => $user_record->id, 'BranchID' => $user_record->BranchID, 'EmployeeID' => $user_record->EmpID, 'EmpName' => $emp_name,'DOB' => $employee_info->DateOfBirth, 'Gender' => $emp_gender, 'Designation' => $emp_desgination, 'Department' => $emp_dep, 'OfficeBranch' => $emp_branch->BranchName,'Headings'=>$heading,'InputTypes'=>$input_type,'Values'=>$val_arr);
-                        $responce = array('message' => $responce_message,'data'=>$responce_data);
-                        if(empty($resp_vals) || empty($heading)){
+                        $responce_data = array('UserType' => $user_type, 'UserID' => $user_record->id, 'BranchID' => $user_record->BranchID, 'EmployeeID' => $user_record->EmpID, 'EmpName' => $emp_name, 'DOB' => $employee_info->DateOfBirth, 'Gender' => $emp_gender, 'Designation' => $emp_desgination, 'Department' => $emp_dep, 'OfficeBranch' => $emp_branch->BranchName, 'Headings' => $heading, 'InputTypes' => $input_type, 'Values' => $val_arr);
+                        $responce = array('message' => $responce_message, 'data' => $responce_data);
+                        if (empty($resp_vals) || empty($heading)) {
                             $responce_message = array('Code' => '403', 'message' => 'Login verified But Data Options Not Available');
-                            $responce = array('message' => $responce_message,'data'=>$responce_data);
+                            $responce = array('message' => $responce_message, 'data' => $responce_data);
                         }
                         //$responce = array('message' => $responce_message,'data'=>$responce_data,'responce_option'=>$response_options);
                     } else {
@@ -188,7 +188,7 @@ class LoginController extends Controller
 //            }
             $employee_id = $data->EmployeeID;
             $branch_id = $data->BranchID;
-            if($branch_id > 0 && $employee_id > 0) {
+            if ($branch_id > 0 && $employee_id > 0) {
                 $employee_list = Yii::$app->contact_db->createCommand("SELECT jp.ID,jp.PacketID,ejp.TeamID,jp.ContactID,cl.ContactName, jp.ContactNumber,jp.ContactNotes
                                                                     FROM job_packet_dtl jp, employee_job_packet_dtl ejp, contact_number_list cl
                                                                     WHERE ejp.PacketID = jp.PacketID and jp.ContactID = cl.ID and ejp.EmployeeID = '" . $employee_id . "' and ejp.BranchID = " . $branch_id . " and jp.Responce = 'N' and ejp.Active = 'Y' and ejp.Status = 0 ")->queryAll();
@@ -215,11 +215,11 @@ class LoginController extends Controller
 //                                $Reschedule = '2021-01-04 10:15';
 //                            }
 //                        }
-                       if(!empty($v) && $v->TeamID > 0){
+                        if (!empty($v) && $v->TeamID > 0) {
                             $team_id = $v->TeamID;
-                       }else{
-                           $team_id = '';
-                       }
+                        } else {
+                            $team_id = '';
+                        }
 
 //                    $conatc_info = ContactNumberList::find()->where(['ID'=>$contact_id])->one();
 //                    $call_history_info = Yii::$app->contact_db->createCommand("SELECT CallFilePath,ResponseID,OtherNote,AudioNote,UserID,EnteredOn FROM job_call_responses WHERE ContactID =".$contact_id)->queryAll();
@@ -239,7 +239,7 @@ class LoginController extends Controller
 //                        //$history_data = array('ContactInfo'=>$contact_dtl,'CallHistory' => $call_responses);
 //                    }
                         //$number_list[] = array('ContactID'=>$v->ContactID,'ContactNumber' => $v->ContactNumber, 'ContactName'=>$conatct_name,'ContactNotes' => $v->ContactNotes,'CallHistory' => $call_responses);
-                        $number_list[] = array('JobID' => $v->ID, 'TeamID'=>$team_id,'ContactID' => $contact_id, 'ContactNumber' => $contact_number, 'ContactName' => $conatct_name, 'ContactNotes' => $v->ContactNotes, 'Reschedule' => $Reschedule);
+                        $number_list[] = array('JobID' => $v->ID, 'TeamID' => $team_id, 'ContactID' => $contact_id, 'ContactNumber' => $contact_number, 'ContactName' => $conatct_name, 'ContactNotes' => $v->ContactNotes, 'Reschedule' => $Reschedule);
                     }
 
                     $responce_message = array('Code' => '200', 'message' => 'Packet Fetched!');
@@ -251,7 +251,7 @@ class LoginController extends Controller
                     $responce = array('message' => $responce_message);
 
                 }
-            }else{
+            } else {
                 $responce_message = array('Code' => '403', 'message' => 'Employee or branch info is not Correct');
                 $data_pkt = array("");
                 $responce = array('message' => $responce_message);
@@ -267,7 +267,8 @@ class LoginController extends Controller
     }
 
     // to save the data with destination = bulk_pending_by_user.
-    public function actionPendingRecord(){
+    public function actionPendingRecord()
+    {
 
         $posting_data = file_get_contents("php://input");
 //        $posting_data = '{"UUID":"W-SD3:9l:440:45-1235688965","EmpID":"45",
@@ -287,16 +288,16 @@ class LoginController extends Controller
         $uuid = $data->UUID;
         $responce_action = 'bulk_pending_by_user';
 
-        $response = CommonFunctions::SaveNodes($responce_action,$posting_data,$uuid);
-        if($response == 1){
+        $response = CommonFunctions::SaveNodes($responce_action, $posting_data, $uuid);
+        if ($response == 1) {
             $message = array('Code' => '200', 'message' => 'Sucessfully Saved.');
-        }else if($response == 2){
+        } else if ($response == 2) {
             $message = array('Code' => '403', 'message' => 'Request Against UUID Already Sent.');
-        }else{
+        } else {
             $message = array('Code' => '403', 'message' => 'Not Saved.');
         }
 
-        $response_array = array('Message'=>$message);
+        $response_array = array('Message' => $message);
         $response = json_encode($response_array);
 
         return $response;
@@ -325,47 +326,47 @@ class LoginController extends Controller
             $BranchID = $data->BranchID;
             $user_id = $data->user_id;
 
-            $conatc_info = ContactNumberList::find()->where(['ID'=>$contact_id])->one();
-            if(!empty($conatc_info)){
+            $conatc_info = ContactNumberList::find()->where(['ID' => $contact_id])->one();
+            if (!empty($conatc_info)) {
                 $contact_id = $conatc_info->ID;
                 $conatc_name = $conatc_info->ContactName;
                 $conatc_address = $conatc_info->ContactAddress;
                 $conatc_notes = $conatc_info->ContactNotes;
-            }else{
+            } else {
                 $conatc_name = $conatc_info->ContactName;
                 $conatc_address = $conatc_info->ContactAddress;
                 $conatc_notes = $conatc_info->ContactNotes;
             }
-            $contact_dtl = array('ID'=>$contact_id,'ContactName'=>$conatc_name,'Address'=>$conatc_address,'Notes'=>$conatc_notes);
+            $contact_dtl = array('ID' => $contact_id, 'ContactName' => $conatc_name, 'Address' => $conatc_address, 'Notes' => $conatc_notes);
 
-            $call_history_info = Yii::$app->contact_db->createCommand("SELECT CallFilePath,ResponseID,OtherNote,AudioNote,UserID,EnteredOn FROM job_call_responses WHERE ContactID =".$contact_id)->queryAll();
+            $call_history_info = Yii::$app->contact_db->createCommand("SELECT CallFilePath,ResponseID,OtherNote,AudioNote,UserID,EnteredOn FROM job_call_responses WHERE ContactID =" . $contact_id)->queryAll();
             $call_history_info = CommonFunctions::arrayToObject($call_history_info);
 
-            $call_history_info = JobCallResponses::find()->select('CallFilePath,ResponseID,OtherNote,AudioNote,UserID,EnteredOn')->where(['ContactID'=>$contact_id])->all();
+            $call_history_info = JobCallResponses::find()->select('CallFilePath,ResponseID,OtherNote,AudioNote,UserID,EnteredOn')->where(['ContactID' => $contact_id])->all();
 
             if (!empty($call_history_info)) {
 
 
                 foreach ($call_history_info as $v) {
                     $responce_info = CommonFunctions::printResponcseName($v->ResponseID);
-                    $call_by_info = CommonFunctions::printEmployeeName($v->UserID,$BranchID);
-                    $call_on = date('d M, Y',strtotime($v->EnteredOn));
-                    if(!empty($v->CallFilePath)){
-                        $call_recording = AppConstants::AgentCallRecording.$v->CallFilePath;
-                    }else{
+                    $call_by_info = CommonFunctions::printEmployeeName($v->UserID, $BranchID);
+                    $call_on = date('d M, Y', strtotime($v->EnteredOn));
+                    if (!empty($v->CallFilePath)) {
+                        $call_recording = AppConstants::AgentCallRecording . $v->CallFilePath;
+                    } else {
                         $call_recording = '';
                     }
 
-                    if(!empty($v->AudioNote)){
-                        $voice_note = AppConstants::AgentAudioNote.$v->AudioNote;
-                    }else{
+                    if (!empty($v->AudioNote)) {
+                        $voice_note = AppConstants::AgentAudioNote . $v->AudioNote;
+                    } else {
                         $voice_note = '';
                     }
-                    $call_responses[] = array('CallRecording' => $call_recording, 'AudioNote' => $voice_note, 'OtherNote' => $v->OtherNote,'ResponceNote'=>$responce_info,'CallBy'=>$call_by_info,'CallDate'=>$call_on);
+                    $call_responses[] = array('CallRecording' => $call_recording, 'AudioNote' => $voice_note, 'OtherNote' => $v->OtherNote, 'ResponceNote' => $responce_info, 'CallBy' => $call_by_info, 'CallDate' => $call_on);
                 }
 
                 $responce_message = array('Code' => '200', 'message' => 'Data Fetched!');
-                $history_data = array('ContactInfo'=>$contact_dtl,'CallHistory' => $call_responses);
+                $history_data = array('ContactInfo' => $contact_dtl, 'CallHistory' => $call_responses);
             } else {
                 $responce_message = array('Code' => '403', 'message' => 'Response Not Fetched!');
                 $history_data = '';
@@ -381,6 +382,70 @@ class LoginController extends Controller
 
     }
 
+    //to send the call history of an employee
+    public function actionHistory()
+    {
+//        $api_data_streem = file_get_contents("php://input");
+        $api_data_streem = '{  "emp_id":"183",
+                               "team_id":"10",
+                                "start_date":"2021-01-01",
+                                "end_date":"2021-01-25"}';
+
+        $data = json_decode($api_data_streem);
+
+        $date = date('Y-m-d');
+
+        if (!empty($data)) {
+
+            $emp_id = $data->emp_id;
+            $team_id = $data->team_id;
+            $start_date = $data->start_date;
+            $end_date = $data->end_date;
+
+            if (empty($start_date)) {
+                $start_date = $date;
+            }
+            if (empty($end_date)) {
+                $end_date = $date;
+            }
+            $where = '';
+            if (!empty($start_date) && !empty($end_date)) {
+                $where .= " and EnteredOn between '" . $start_date . "' and  '" . $end_date . "'";
+            }
+
+            $response_stats = Yii::$app->contact_db->createCommand("
+        SELECT DISTINCT ResponseID ,Count(ResponseID) as response 
+        FROM job_call_responses 
+        WHERE TeamID = " . $team_id . " AND EmployeeID = " . $emp_id . ". $where
+        GROUP BY ResponseID,TeamID
+                  ")->queryAll();
+
+            $response_stats = CommonFunctions::arrayToObject($response_stats);
+
+            if (!empty($response_stats)) {
+
+                $zp = 0;
+
+                foreach ($response_stats as $x) {
+                    $x++;
+                    $response_count = $x->response;
+                    $resp_id = $x->ResponseID;
+
+                    if (!empty($resp_id)) {
+                        $resp_name = CommonFunctions::printResponcseName($resp_id);
+                    }
+
+
+                }
+            }
+
+            echo "<pre>";
+            print_r($response_stats);
+            exit();
+
+
+        }
+    }
 }
 
 
