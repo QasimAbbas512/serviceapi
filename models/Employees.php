@@ -24,6 +24,7 @@ use CommonFunctions;
  * @property int|null $MaritalStatus
  * @property int|null $BloodGroup
  * @property string|null $Email
+ * @property string|null $OfficeEmail
  * @property string|null $Address
  * @property string|null $AttMachineNo user for mapping with attendance machine data
  * @property int $DesignationID
@@ -109,6 +110,7 @@ class Employees extends \yii\db\ActiveRecord
             [['CNIC', 'NTN_No'], 'string', 'max' => 30],
             [['ImageName'], 'string', 'max' => 150],
             [['Email', 'Address'], 'string', 'max' => 255],
+            [['OfficeEmail'], 'string', 'max' => 100],
             [['AccountNo', 'AccountTitle'], 'string', 'max' => 50],
             [['Active'], 'string', 'max' => 3],
             [['BranchID'], 'exist', 'skipOnError' => true, 'targetClass' => CompanyBranches::className(), 'targetAttribute' => ['BranchID' => 'BranchID']],
@@ -141,6 +143,7 @@ class Employees extends \yii\db\ActiveRecord
             'MaritalStatus' => 'Marital Status',
             'BloodGroup' => 'Blood Group',
             'Email' => 'Email',
+            'OfficeEmail' => 'Office Email',
             'Address' => 'Address',
             'AttMachineNo' => 'Att Machine No',
             'DesignationID' => 'Designation ID',
