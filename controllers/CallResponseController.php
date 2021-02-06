@@ -18,7 +18,7 @@ use app\models\EmployeeJobPacketDtl;
 use Yii;
 use app\models\NodeRequestedDate;
 use app\models\JobCallResponses;
-use app\models\JobPacketDtl;
+use app\models\AppResponseDtl;
 use app\models\JobPackets;
 use CommonFunctions;
 use AppConstants;
@@ -142,6 +142,7 @@ class CallResponseController extends Controller
                     $employee_id = $user_info->EmpID;
 
                     $JobID = $val->JobID;
+                    
                     $team_id = $val->TeamID;
 
                     $packet_record = CommonFunctions::JobPacketDtlInfo($JobID, $call_request_branch);//JobPacketDtl::find()->where(['ID' => $JobID])->one();
@@ -186,9 +187,12 @@ class CallResponseController extends Controller
                         } else {
                             $AudioNote = 'NoVoiceNote';
                         }
+
+                        $action = CommonFunctions::ResponseActions($ResponseValues , $ContactID);
+
                         //$AudioNote = $val->{'AudioNotes'};
 
-                        // for the time we consider only one voice note comming or it can be null also next we will update this
+                        // for the time being we consider only one voice note comming or it can be null also next we will update this
                         //$voice_note_audio_files = implode(',', (array)$AudioNote);
 
                         $model = new JobCallResponses();
@@ -226,8 +230,9 @@ class CallResponseController extends Controller
                             $job_message = 'Executed Successfully';
                             $update_status = 'update node_requested_date set Picked = 1, status = 1, Completed = 1, PickedTime = "' . $PickedTime . '", CompletedTime = "' . $CompletedTime . '", job_message = "' . $job_message . '", Tried = "' . $Tried . '"  where ID = "' . $row_id . '"';
                             Yii::$app->machine_db->createCommand($update_status)->execute();
-                            Yii::$app->contact_db->createCommand('update job_packet_dtl set Responce = "Y" where ID =' . $JobID)->execute();
+                            Yii::$app->contact_db->createCommand('update job_packet_dtl set Responce = "Y", Redial = "'.$action.'" where ID =' . $JobID)->execute();
 
+//                            Yii::$app->contact_db->createCommand('update contact_number_list set Response = "Y" where ID =' . $ContactID)->execute();
                             //$transaction2->commit();
                         } else {
                             print_r($model->getErrors());
