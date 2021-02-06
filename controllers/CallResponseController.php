@@ -14,6 +14,7 @@
 
 namespace app\controllers;
 
+use app\models\EmployeeJobPacketDtl;
 use Yii;
 use app\models\NodeRequestedDate;
 use app\models\JobCallResponses;
@@ -135,8 +136,22 @@ class CallResponseController extends Controller
                     $UUID = $val->UUID;
                     $macAddress = $val->MacAddress;
                     $UserID = $val->UserID;
+
+                    $user_info = CommonFunctions::UserInfo($UserID);
+                    $call_request_branch = $user_info->BranchID;
+                    $employee_id = $user_info->EmpID;
+
                     $JobID = $val->JobID;
                     $team_id = $val->TeamID;
+
+                    $packet_record = CommonFunctions::JobPacketDtlInfo($JobID, $call_request_branch);//JobPacketDtl::find()->where(['ID' => $JobID])->one();
+                    $packet_data = $packet_record->PacketID;
+
+                    if(empty($team_id)){
+                        $job_pkt_info = EmployeeJobPacketDtl::find()->where(['PacketID'=>$packet_data])->one();
+                        $team_id = $job_pkt_info->TeamID;
+                    }
+
                     $ContactID = $val->ContactID;
 
                     //$chk = JobCallResponses::find()->where(['UUID'=>$UUID])->andWhere(['PacketDtlID'=>$JobID])->andWhere(['TeamID'=>$team_id])->one();
@@ -150,11 +165,6 @@ class CallResponseController extends Controller
                     if (empty($chk) || count($chk) == 0) {
 
                         //continue;
-
-                        $user_info = CommonFunctions::UserInfo($UserID);
-                        $call_request_branch = $user_info->BranchID;
-                        $employee_id = $user_info->EmpID;
-
 
                         if (!empty($val->Skip)) {
                             $ResponseValues = AppConstants::SkipValue;

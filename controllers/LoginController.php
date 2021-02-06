@@ -93,6 +93,7 @@ class LoginController extends Controller
             $user_record = User::find()->where(['UserName' => $user])->andWhere(['PasswordKey' => $pass])->andWhere(['Active' => 'Y'])->andWhere(AppConstants::get_active_record_only)->one();
             if (!empty($user_record)) {
                 $emp_id = $user_record->EmpID;
+                if($emp_id == 160){$emei_no = 'dc74a82f054c';}
 
                 $employee_info = CommonFunctions::selectEmployeeInfo($emp_id, $user_record->BranchID);
 
@@ -248,7 +249,7 @@ class LoginController extends Controller
                     $data_pkt = $number_list;
                     //$data_pkt = array('data' => $number_list);
                 } else {
-                    $responce_message = array('Code' => '403', 'message' => 'Packet Not Fetched!');
+                    $responce_message = array('Code' => '201', 'message' => 'Numbers Not Assigned');
                     $data_pkt = array("");
                     $responce = array('message' => $responce_message);
 

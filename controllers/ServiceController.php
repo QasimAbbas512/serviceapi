@@ -58,8 +58,16 @@ class ServiceController extends Controller
         $TeamID = $data->TeamID;
         $JobID = $data->JobID;
         $SentDate = $data->SentDate;
+        $type = $data->Type;
 
-        $target_path = 'files/../../../aaacms/web/'.AppConstants::AudioNote.'/';
+        if($type == 'Audio'){
+            $file_folder = AppConstants::AudioNote;
+        }else{
+            $file_folder = AppConstants::CallRecording;
+        }
+
+
+        $target_path = 'files/../../../aaacms/web/'.$file_folder.'/';
        // $target_path = AppConstants::AudioNote."/";
 
         $responce_message  = array();
