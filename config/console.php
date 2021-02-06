@@ -2,6 +2,9 @@
 
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
+$machine_db = require __DIR__ . '/machine_db.php';
+$contact_db = require __DIR__ . '/contacts_data.php';
+$media_db = require __DIR__ . '/media_db.php';
 
 $config = [
     'id' => 'basic-console',
@@ -31,6 +34,18 @@ $config = [
             ],
         ],
         'db' => $db,
+        'machine_db' => $machine_db,
+        'contact_db'=>$contact_db,
+        'media_db'=>$media_db,
+
+        'urlManager' => [
+            'class' => 'yii\web\UrlManager',
+            'showScriptName' => false,
+            'enablePrettyUrl' => true,
+            'rules' => [
+                //['class' => 'yii\rest\UrlRule', 'controller' => 'parameter'],
+            ],
+        ],
     ],
     'params' => $params,
     /*
