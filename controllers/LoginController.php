@@ -94,6 +94,7 @@ class LoginController extends Controller
             if (!empty($user_record)) {
                 $emp_id = $user_record->EmpID;
                 if($emp_id == 160){$emei_no = 'dc74a82f054c';}
+                if($emp_id == 183){$emei_no = 'b89436f802da';}
 
                 $employee_info = CommonFunctions::selectEmployeeInfo($emp_id, $user_record->BranchID);
 
@@ -342,8 +343,8 @@ class LoginController extends Controller
             }
             $contact_dtl = array('ID' => $contact_id, 'ContactName' => $conatc_name, 'Address' => $conatc_address, 'Notes' => $conatc_notes);
 
-            $call_history_info = Yii::$app->contact_db->createCommand("SELECT CallFilePath,ResponseID,OtherNote,AudioNote,UserID,EnteredOn FROM job_call_responses WHERE ContactID =" . $contact_id)->queryAll();
-            $call_history_info = CommonFunctions::arrayToObject($call_history_info);
+            //$call_history_info = Yii::$app->contact_db->createCommand("SELECT CallFilePath,ResponseID,OtherNote,AudioNote,UserID,EnteredOn FROM job_call_responses WHERE ContactID =" . $contact_id)->queryAll();
+            //$call_history_info = CommonFunctions::arrayToObject($call_history_info);
 
             $call_history_info = JobCallResponses::find()->select('CallFilePath,ResponseID,OtherNote,AudioNote,UserID,EnteredOn')->where(['ContactID' => $contact_id])->all();
 
