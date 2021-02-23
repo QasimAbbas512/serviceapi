@@ -93,8 +93,8 @@ class CallResponseController extends Controller
      */
     public function actionCall()
     {
-
-//        $call_action_data = '[{"MacAddress":"WSD3:9l:440:45",
+        header("Refresh: 50");
+        //        $call_action_data = '[{"MacAddress":"WSD3:9l:440:45",
 //         "UserID":"1",
 //         "JobID":"1",
 //         "CompanyID":"1",
