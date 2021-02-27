@@ -14,6 +14,7 @@
 
 namespace app\controllers;
 
+use app\models\CallAppointment;
 use app\models\EmployeeJobPacketDtl;
 use Yii;
 use app\models\NodeRequestedDate;
@@ -112,6 +113,7 @@ class CallResponseController extends Controller
         Yii::$app->machine_db->createCommand($sql)->execute();
 
         $call_record = NodeRequestedDate::find()->where('Status = 0 and Picked = 1 and Completed =0 and RequestDestination = "call_response"')->all();
+
 //        echo '<pre>';
 //        print_r($call_record);
 //        exit();
@@ -220,17 +222,35 @@ class CallResponseController extends Controller
                         $model->UUID = $UUID;
                         $model->BranchID = $call_request_branch;
                         $model->EnteredOn = date('Y-m-d H:i:s');
+                        $model->ReceivedOn = date('Y-m-d');
                         $model->EnteredBy = 1;
 
                         //$transaction2 = Yii::$app->contact_db->beginTransaction();
                         //try {
                         if ($model->save()) {
                             $CompletedTime = date('Y-m-d H:i:s');
+                            $set_app_flag = '';
+                            if(!empty($val->Reschedule)){
+                                $appointment_time = date('Y-m-d H:i',strtotime($val->Reschedule));
+
+                                /*$app_model = new CallAppointment();
+                                $app_model->JobID = $JobID;
+                                $app_model->ContactID = $ContactID;
+                                $app_model->CallRecordID = $model->ID;
+                                $app_model->AppointmentTime = $appointment_time;
+                                $app_model->EmployeeID = $model->EmployeeID;
+                                $app_model->EnteredOn = $model->EnteredOn;
+                                if($app_model->save()){}else{print_r($app_model->getErrors());}*/
+                                $set_app_flag = ', Rescheduled = "'.$appointment_time.'"';
+                                Yii::$app->contact_db->createCommand("INSERT INTO call_appointment (JobID,ContactID,CallRecordID,AppointmentTime,EmployeeID,EnteredOn) VALUES ($JobID,$ContactID,$model->ID,'$appointment_time',$model->EmployeeID,'$model->EnteredOn')")->execute();
+                            }
                             $Tried = 1;
                             $job_message = 'Executed Successfully';
                             $update_status = 'update node_requested_date set Picked = 1, status = 1, Completed = 1, PickedTime = "' . $PickedTime . '", CompletedTime = "' . $CompletedTime . '", job_message = "' . $job_message . '", Tried = "' . $Tried . '"  where ID = "' . $row_id . '"';
                             Yii::$app->machine_db->createCommand($update_status)->execute();
-                            Yii::$app->contact_db->createCommand('update job_packet_dtl set Responce = "Y", Redial = "'.$action.'" where ID =' . $JobID)->execute();
+
+                            Yii::$app->contact_db->createCommand('update job_packet_dtl set Responce = "Y", Redial = "'.$action.'" '.$set_app_flag.' where ID =' . $JobID)->execute();
+
 
 //                            Yii::$app->contact_db->createCommand('update contact_number_list set Response = "Y" where ID =' . $ContactID)->execute();
                             //$transaction2->commit();

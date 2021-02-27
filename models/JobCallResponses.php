@@ -21,6 +21,7 @@ use Yii;
  * @property string $MacInfo
  * @property string $UUID
  * @property string $Active
+ * @property string $CallingDate
  * @property string $EnteredOn
  * @property int $EnteredBy
  * @property string $IsDeleted
@@ -59,7 +60,7 @@ class JobCallResponses extends \yii\db\ActiveRecord
             [['PacketDtlID', 'JobPacketID', 'ContactID', 'ResponseID', 'UserID', 'EmployeeID', 'MacInfo', 'EnteredOn', 'EnteredBy', 'BranchID'], 'required'],
             [['PacketDtlID', 'JobPacketID', 'ContactID', 'TeamID', 'ResponseID', 'UserID', 'EmployeeID', 'EnteredBy', 'DeletedBy', 'BranchID'], 'integer'],
             [['OtherNote'], 'string'],
-            [['EnteredOn', 'DeletedOn'], 'safe'],
+            [['EnteredOn', 'CallingDate', 'DeletedOn'], 'safe'],
             [['CallFilePath'], 'string', 'max' => 100],
             [['AudioNote'], 'string', 'max' => 150],
             [['MacInfo'], 'string', 'max' => 30],

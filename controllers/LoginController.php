@@ -17,6 +17,7 @@ namespace app\controllers;
 use Yii;
 use app\models\Employees;
 use app\models\User;
+use app\models\CallAppointment;
 use app\models\UserMobileInfo;
 use app\models\ContactNumberList;
 use app\models\JobCallResponses;
@@ -193,9 +194,9 @@ class LoginController extends Controller
             $employee_id = $data->EmployeeID;
             $branch_id = $data->BranchID;
             if ($branch_id > 0 && $employee_id > 0) {
-                $employee_list = Yii::$app->contact_db->createCommand("SELECT jp.ID,jp.PacketID,ejp.TeamID,jp.ContactID,cl.ContactName, jp.ContactNumber,jp.ContactNotes
+                $employee_list = Yii::$app->contact_db->createCommand("SELECT jp.ID,jp.PacketID,ejp.TeamID,jp.Rescheduled,jp.ContactID,cl.ContactName, jp.ContactNumber,jp.ContactNotes
                                                                     FROM job_packet_dtl jp, employee_job_packet_dtl ejp, contact_number_list cl
-                                                                    WHERE ejp.PacketID = jp.PacketID and jp.ContactID = cl.ID and ejp.EmployeeID = '" . $employee_id . "' and ejp.BranchID = " . $branch_id . " and jp.Responce = 'N' and ejp.Active = 'Y' and ejp.Status = 0 ")->queryAll();
+                                                                    WHERE ejp.PacketID = jp.PacketID and jp.ContactID = cl.ID and ejp.EmployeeID = '" . $employee_id . "' and ejp.BranchID = " . $branch_id . " and (jp.Responce = 'N' OR jp.Rescheduled IS NOT NULL) and ejp.Active = 'Y' and ejp.Status = 0 ")->queryAll();
 
                 if (!empty($employee_list)) {
                     $employee_list = CommonFunctions::arrayToObject($employee_list);
@@ -213,7 +214,13 @@ class LoginController extends Controller
                             $contact_number = '03404534653';
                         }
                         $Reschedule = '';
-                        if ($employee_id == 183 && $x <= 5) {
+                        if(!empty($v->Rescheduled) && date('Y-m-d',strtotime($v->Rescheduled)) == date('Y-m-d')){
+                            //$app_info = CallAppointment::find()->where(['ContactID'=>$contact_id])->andWhere(['EmployeeID'=>$employee_id])->andWhere(['JobID'=>$v->ID])->one();
+                            //$Reschedule = $app_info->AppointmentTime;
+                            $Reschedule = $v->Rescheduled;
+                        }
+
+                        if (($employee_id == 183 || $employee_id == 160) && $x <= 5) {
                             $Reschedule = '2021-01-04 15:30';
                             if ($x == 3) {
                                 $Reschedule = '2021-01-04 10:15';

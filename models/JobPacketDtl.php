@@ -12,6 +12,8 @@ use Yii;
  * @property int $ContactID
  * @property string $ContactNumber
  * @property string $ContactNotes
+ * @property string $Redial
+ * @property string $Rescheduled
  * @property string $Active
  * @property string $Responce
  * @property string $EnteredOn
@@ -52,8 +54,9 @@ class JobPacketDtl extends \yii\db\ActiveRecord
             [['PacketID', 'ContactID', 'EnteredBy', 'DeletedBy', 'BranchID'], 'integer'],
             [['EnteredOn', 'DeletedOn'], 'safe'],
             [['ContactNumber'], 'string', 'max' => 20],
+            [['Rescheduled'], 'string', 'max' => 16],
             [['ContactNotes'], 'string', 'max' => 255],
-            [['Active', 'Responce', 'IsDeleted'], 'string', 'max' => 1],
+            [['Active', 'Redial', 'Responce', 'IsDeleted'], 'string', 'max' => 1],
             [['ContactID'], 'exist', 'skipOnError' => true, 'targetClass' => ContactNumberList::className(), 'targetAttribute' => ['ContactID' => 'ID']],
             [['PacketID'], 'exist', 'skipOnError' => true, 'targetClass' => JobPackets::className(), 'targetAttribute' => ['PacketID' => 'ID']],
         ];
