@@ -142,7 +142,7 @@ class CallResponseController extends Controller
                     $employee_id = $user_info->EmpID;
 
                     $JobID = $val->JobID;
-                    
+
                     $team_id = $val->TeamID;
 
                     $packet_record = CommonFunctions::JobPacketDtlInfo($JobID, $call_request_branch);//JobPacketDtl::find()->where(['ID' => $JobID])->one();
@@ -188,7 +188,7 @@ class CallResponseController extends Controller
                             $AudioNote = 'NoVoiceNote';
                         }
 
-                        $action = CommonFunctions::ResponseActions($ResponseValues , $ContactID);
+                        $action = CommonFunctions::ResponseActions($ResponseValues);
 
                         //$AudioNote = $val->{'AudioNotes'};
 
