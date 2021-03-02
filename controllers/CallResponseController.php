@@ -222,7 +222,7 @@ class CallResponseController extends Controller
                         $model->UUID = $UUID;
                         $model->BranchID = $call_request_branch;
                         $model->EnteredOn = date('Y-m-d H:i:s');
-                        $model->ReceivedOn = date('Y-m-d');
+                        $model->CallingDate = date('Y-m-d');
                         $model->EnteredBy = 1;
 
                         //$transaction2 = Yii::$app->contact_db->beginTransaction();
